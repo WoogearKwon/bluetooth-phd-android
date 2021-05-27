@@ -1,4 +1,4 @@
-package jp.co.ohq.utility;
+package net.huray.phd.bluetooth.model.entity;
 
 
 import androidx.annotation.Nullable;

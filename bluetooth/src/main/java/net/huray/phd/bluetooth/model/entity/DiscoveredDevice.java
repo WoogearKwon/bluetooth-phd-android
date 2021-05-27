@@ -1,4 +1,4 @@
-package jp.co.ohq.model.entity;
+package net.huray.phd.bluetooth.model.entity;
 
 import android.os.Parcel;
 import android.os.Parcelable;

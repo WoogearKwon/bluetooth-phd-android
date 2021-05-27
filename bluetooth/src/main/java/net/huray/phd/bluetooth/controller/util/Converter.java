@@ -1,4 +1,4 @@
-package jp.co.ohq.utility;
+package net.huray.phd.bluetooth.controller.util;
 
 import android.util.AndroidRuntimeException;
 

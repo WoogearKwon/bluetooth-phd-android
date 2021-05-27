@@ -4,7 +4,7 @@
 //  Copyright (c) 2016 OMRON HEALTHCARE Co.,Ltd. All rights reserved.
 //
 
-package jp.co.ohq.utility;
+package net.huray.phd.bluetooth.controller.util;
 
 import jp.co.ohq.utility.log.AbsLog;
 

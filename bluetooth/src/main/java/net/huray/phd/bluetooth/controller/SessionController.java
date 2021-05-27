@@ -1,4 +1,4 @@
-package jp.co.ohq.utility;
+package net.huray.phd.bluetooth.controller;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -6,19 +6,26 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import jp.co.ohq.ble.enumerate.OHQCompletionReason;
+import jp.co.ohq.ble.enumerate.OHQConnectionState;
+
+import net.huray.phd.bluetooth.controller.util.AppLog;
+import net.huray.phd.bluetooth.model.entity.SessionData;
+
 import java.util.LinkedList;
 import java.util.Map;
 
 import jp.co.ohq.androidcorebluetooth.CBPeripheral;
 import jp.co.ohq.ble.OHQDeviceManager;
-import jp.co.ohq.ble.enumerate.OHQCompletionReason;
-import jp.co.ohq.ble.enumerate.OHQConnectionState;
 import jp.co.ohq.ble.enumerate.OHQDataType;
 import jp.co.ohq.ble.enumerate.OHQDetailedState;
 import jp.co.ohq.ble.enumerate.OHQDeviceCategory;
 import jp.co.ohq.ble.enumerate.OHQMeasurementRecordKey;
 import jp.co.ohq.ble.enumerate.OHQSessionOptionKey;
 import jp.co.ohq.ble.enumerate.OHQUserDataKey;
+import jp.co.ohq.utility.Handler;
+import jp.co.ohq.utility.SynchronizeCallback;
+import jp.co.ohq.utility.Types;
 
 public class SessionController implements
         OHQDeviceManager.DataObserverBlock,

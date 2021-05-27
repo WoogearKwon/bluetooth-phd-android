@@ -1,4 +1,4 @@
-package jp.co.ohq.utility;
+package net.huray.phd.bluetooth.system;
 
 import android.os.HandlerThread;
 import android.text.TextUtils;
@@ -7,12 +7,18 @@ import android.util.AndroidRuntimeException;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import net.huray.phd.bluetooth.controller.util.AppLog;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+
+import jp.co.ohq.utility.Handler;
+import jp.co.ohq.utility.SynchronizeCallback;
+import jp.co.ohq.utility.Types;
 
 public final class LoggingManager {
 

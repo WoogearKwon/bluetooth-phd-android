@@ -5,9 +5,15 @@ import jp.co.ohq.androidcorebluetooth.CBConfig
 import jp.co.ohq.androidcorebluetooth.CBConfig.CreateBondOption
 import jp.co.ohq.androidcorebluetooth.CBConfig.RemoveBondOption
 import jp.co.ohq.ble.enumerate.*
-import jp.co.ohq.model.entity.DiscoveredDevice
-import jp.co.ohq.model.enumerate.OHQSessionType
+import net.huray.phd.bluetooth.model.entity.DiscoveredDevice
+import net.huray.phd.bluetooth.model.enumerate.OHQSessionType
 import jp.co.ohq.utility.*
+import net.huray.phd.bluetooth.controller.ScanController
+import net.huray.phd.bluetooth.controller.SessionController
+import net.huray.phd.bluetooth.controller.util.AppLog
+import net.huray.phd.bluetooth.listener.OmronDeviceListener
+import net.huray.phd.bluetooth.model.entity.SessionData
+import net.huray.phd.bluetooth.system.LoggingManager
 
 class OmronBleDeviceManager(
     private val deviceType: OHQDeviceCategory,
@@ -17,8 +23,10 @@ class OmronBleDeviceManager(
     private val omronListener: OmronDeviceListener
 ) : ScanController.Listener, SessionController.Listener {
 
-    private val scanController = ScanController(scanListener)
-    private val sessionController = SessionController(sessionListener)
+    private val scanController =
+        ScanController(scanListener)
+    private val sessionController =
+        SessionController(sessionListener)
     private val loggingManager = LoggingManager()
 
     private lateinit var deviceAddress: String

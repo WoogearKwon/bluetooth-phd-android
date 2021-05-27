@@ -1,8 +1,8 @@
-package jp.co.ohq.utility;
+package net.huray.phd.bluetooth.listener;
+
+import net.huray.phd.bluetooth.model.entity.DiscoveredDevice;
 
 import java.util.List;
-
-import jp.co.ohq.model.entity.DiscoveredDevice;
 
 public interface OmronDeviceListener {
     void onScanned(List<DiscoveredDevice> discoveredDevice);

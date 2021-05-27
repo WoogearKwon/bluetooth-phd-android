@@ -1,4 +1,4 @@
-package jp.co.ohq.model.enumerate;
+package net.huray.phd.bluetooth.model.enumerate;
 
 public enum OHQSessionType {
     REGISTER,

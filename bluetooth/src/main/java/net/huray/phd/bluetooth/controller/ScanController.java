@@ -1,4 +1,4 @@
-package jp.co.ohq.utility;
+package net.huray.phd.bluetooth.controller;
 
 import android.util.AndroidRuntimeException;
 
@@ -7,6 +7,10 @@ import androidx.annotation.Nullable;
 
 import com.neovisionaries.bluetooth.ble.advertising.ADStructure;
 
+import net.huray.phd.bluetooth.controller.util.AppLog;
+
+import jp.co.ohq.ble.enumerate.OHQCompletionReason;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -14,10 +18,11 @@ import java.util.List;
 import java.util.Map;
 
 import jp.co.ohq.ble.OHQDeviceManager;
-import jp.co.ohq.ble.enumerate.OHQCompletionReason;
 import jp.co.ohq.ble.enumerate.OHQDeviceCategory;
 import jp.co.ohq.ble.enumerate.OHQDeviceInfoKey;
-import jp.co.ohq.model.entity.DiscoveredDevice;
+import net.huray.phd.bluetooth.model.entity.DiscoveredDevice;
+import jp.co.ohq.utility.Handler;
+import jp.co.ohq.utility.Types;
 
 public class ScanController {
 
