@@ -336,17 +336,17 @@ final class OHQDevice extends StateMachine implements CBPeripheralDelegate {
         @Override
         public boolean processMessage(@NonNull Message msg) {
             OHQLog.e("Illegal event. msg.what:" + String.format(Locale.US, "0x%08x", msg.what));
-            return StateMachine.HANDLED;
+            return HANDLED;
         }
     }
 
     private class InactiveState extends State {
         @Override
         public boolean processMessage(@NonNull Message msg) {
-            boolean handle = StateMachine.NOT_HANDLED;
+            boolean handle = NOT_HANDLED;
             switch (msg.what) {
                 case EVT_START_TRANSFER:
-                    handle = StateMachine.HANDLED;
+                    handle = HANDLED;
                     mNotificationEnabledCharacteristicUUIDs.clear();
                     mLatestUserData.clear();
                     mMeasurementRecords.clear();
@@ -365,10 +365,10 @@ final class OHQDevice extends StateMachine implements CBPeripheralDelegate {
     private class ActiveState extends State {
         @Override
         public boolean processMessage(@NonNull Message msg) {
-            boolean handle = StateMachine.NOT_HANDLED;
+            boolean handle = NOT_HANDLED;
             switch (msg.what) {
                 case EVT_CANCEL_TRANSFER:
-                    handle = StateMachine.HANDLED;
+                    handle = HANDLED;
                     transitionTo(mInactiveState);
                     break;
                 case EVT_UPDATE_CHAR_FAILURE:
@@ -376,7 +376,7 @@ final class OHQDevice extends StateMachine implements CBPeripheralDelegate {
                 case EVT_WRITE_CHAR_FAILURE:
                 case EVT_WRITE_DESC_FAILURE:
                 case EVT_UPDATE_NOTIFY_FAILURE:
-                    handle = StateMachine.HANDLED;
+                    handle = HANDLED;
                     OHQLog.e("Failed to transfer. gatt status:" + msg.arg1);
                     _abort(OHQCompletionReason.FailedToTransfer);
                     break;
@@ -413,12 +413,12 @@ final class OHQDevice extends StateMachine implements CBPeripheralDelegate {
 
         @Override
         public boolean processMessage(@NonNull Message msg) {
-            boolean handle = StateMachine.NOT_HANDLED;
+            boolean handle = NOT_HANDLED;
             switch (msg.what) {
                 case EVT_UPDATE_DESC_SUCCESS: {
                     CBDescriptor descriptor = (CBDescriptor) msg.obj;
                     if (descriptors.contains(descriptor)) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                         if (OHQUUIDDefines.Descriptor.CharacteristicPresentationFormat.uuid().equals(descriptor.uuid())) {
                             _didUpdateValueForCharacteristicPresentationFormatDescriptor(descriptor);
                         }
@@ -469,12 +469,12 @@ final class OHQDevice extends StateMachine implements CBPeripheralDelegate {
 
         @Override
         public boolean processMessage(@NonNull Message msg) {
-            boolean handle = StateMachine.NOT_HANDLED;
+            boolean handle = NOT_HANDLED;
             switch (msg.what) {
                 case EVT_UPDATE_CHAR_SUCCESS: {
                     CBCharacteristic characteristic = (CBCharacteristic) ((Object[])msg.obj)[0];
                     if (characteristics.contains(characteristic)) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                         if (OHQUUIDDefines.Characteristic.ModelNumberString.uuid().equals(characteristic.uuid())) {
                             _didUpdateValueForModelNumberStringCharacteristic(characteristic);
                         } else if (OHQUUIDDefines.Characteristic.BatteryLevel.uuid().equals(characteristic.uuid())) {
@@ -571,10 +571,10 @@ final class OHQDevice extends StateMachine implements CBPeripheralDelegate {
 
         @Override
         public boolean processMessage(@NonNull Message msg) {
-            boolean handle = StateMachine.NOT_HANDLED;
+            boolean handle = NOT_HANDLED;
             switch (msg.what) {
                 case EVT_UPDATE_NOTIFY_SUCCESS: {
-                    handle = StateMachine.HANDLED;
+                    handle = HANDLED;
                     CBCharacteristic characteristic = (CBCharacteristic) msg.obj;
                     mNotificationEnabledCharacteristicUUIDs.add(characteristic.uuid());
                     characteristics.remove(characteristic);
@@ -620,29 +620,29 @@ final class OHQDevice extends StateMachine implements CBPeripheralDelegate {
 
         @Override
         public boolean processMessage(@NonNull Message msg) {
-            boolean handle = StateMachine.NOT_HANDLED;
+            boolean handle = NOT_HANDLED;
             switch (msg.what) {
                 case EVT_UPDATE_CHAR_SUCCESS: {
                     Object[] objects = (Object[]) msg.obj;
                     CBCharacteristic characteristic = (CBCharacteristic) objects[0];
                     byte[] value = (byte[]) objects[1];
                     if (OHQUUIDDefines.Characteristic.BatteryLevel.uuid().equals(characteristic.uuid())) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                         _didUpdateValueForBatteryLevelCharacteristic(characteristic);
                     } else if (OHQUUIDDefines.Characteristic.CurrentTime.uuid().equals(characteristic.uuid())) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                         _didUpdateValueForCurrentTimeCharacteristic(characteristic);
                     } else if (OHQUUIDDefines.Characteristic.BloodPressureMeasurement.uuid().equals(characteristic.uuid())) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                         _didUpdateValueForBloodPressureMeasurementCharacteristic(characteristic);
                     } else if (OHQUUIDDefines.Characteristic.WeightMeasurement.uuid().equals(characteristic.uuid())) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                         _didUpdateValueForWeightMeasurementCharacteristic(characteristic);
                     } else if (OHQUUIDDefines.Characteristic.BodyCompositionMeasurement.uuid().equals(characteristic.uuid())) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                         _didUpdateValueForBodyCompositionMeasurementCharacteristic(value);
                     } else if (OHQUUIDDefines.Characteristic.OmronMeasurementWS.uuid().equals(characteristic.uuid())) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                         _didUpdateValueForOmronMeasurementWSCharacteristic(value);
                     }
                     break;
@@ -650,7 +650,7 @@ final class OHQDevice extends StateMachine implements CBPeripheralDelegate {
                 case EVT_WRITE_CHAR_SUCCESS: {
                     CBCharacteristic characteristic = (CBCharacteristic) msg.obj;
                     if (OHQUUIDDefines.Characteristic.CurrentTime.uuid().equals(characteristic.uuid())) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                         OHQLog.d("CTS WriteCharacteristic Success.");
                     }
                     break;
@@ -658,7 +658,7 @@ final class OHQDevice extends StateMachine implements CBPeripheralDelegate {
                 case EVT_WRITE_CHAR_FAILURE: {
                     CBCharacteristic characteristic = (CBCharacteristic) msg.obj;
                     if (OHQUUIDDefines.Characteristic.CurrentTime.uuid().equals(characteristic.uuid())) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                         int status = msg.arg1;
                         if (CBStatusCode.GATT_NO_RESOURCES == status) {   // 0x80: WriteCharacteristic Request Rejected
                             // If the slave sends error response in CTS,
@@ -927,19 +927,19 @@ final class OHQDevice extends StateMachine implements CBPeripheralDelegate {
 
         @Override
         public boolean processMessage(@NonNull Message msg) {
-            boolean handle = StateMachine.NOT_HANDLED;
+            boolean handle = NOT_HANDLED;
             switch (msg.what) {
                 case EVT_WRITE_CHAR_SUCCESS: {
                     CBCharacteristic characteristic = (CBCharacteristic) msg.obj;
                     if (OHQUUIDDefines.Characteristic.UserControlPoint.uuid().equals(characteristic.uuid())) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                     }
                     break;
                 }
                 case EVT_UPDATE_CHAR_SUCCESS: {
                     CBCharacteristic characteristic = (CBCharacteristic) ((Object[])msg.obj)[0];
                     if (OHQUUIDDefines.Characteristic.UserControlPoint.uuid().equals(characteristic.uuid())) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                         _didUpdateValueForUserControlPointCharacteristic(characteristic);
                     }
                     break;
@@ -1017,19 +1017,19 @@ final class OHQDevice extends StateMachine implements CBPeripheralDelegate {
 
         @Override
         public boolean processMessage(@NonNull Message msg) {
-            boolean handle = StateMachine.NOT_HANDLED;
+            boolean handle = NOT_HANDLED;
             switch (msg.what) {
                 case EVT_WRITE_CHAR_SUCCESS: {
                     CBCharacteristic characteristic = (CBCharacteristic) msg.obj;
                     if (OHQUUIDDefines.Characteristic.UserControlPoint.uuid().equals(characteristic.uuid())) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                     }
                     break;
                 }
                 case EVT_UPDATE_CHAR_SUCCESS: {
                     CBCharacteristic characteristic = (CBCharacteristic) ((Object[])msg.obj)[0];
                     if (OHQUUIDDefines.Characteristic.UserControlPoint.uuid().equals(characteristic.uuid())) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                         _didUpdateValueForUserControlPointCharacteristic(characteristic);
                     }
                     break;
@@ -1106,19 +1106,19 @@ final class OHQDevice extends StateMachine implements CBPeripheralDelegate {
 
         @Override
         public boolean processMessage(@NonNull Message msg) {
-            boolean handle = StateMachine.NOT_HANDLED;
+            boolean handle = NOT_HANDLED;
             switch (msg.what) {
                 case EVT_WRITE_CHAR_SUCCESS: {
                     CBCharacteristic characteristic = (CBCharacteristic) msg.obj;
                     if (OHQUUIDDefines.Characteristic.UserControlPoint.uuid().equals(characteristic.uuid())) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                     }
                     break;
                 }
                 case EVT_UPDATE_CHAR_SUCCESS: {
                     CBCharacteristic characteristic = (CBCharacteristic) ((Object[])msg.obj)[0];
                     if (OHQUUIDDefines.Characteristic.UserControlPoint.uuid().equals(characteristic.uuid())) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                         UserControlPoint.Response response = UserControlPoint.parseResponse(characteristic.value());
                         OHQLog.d(response.toString());
                         if (UserControlPoint.OpCode.DeleteUserData != response.requestOpCode) {
@@ -1153,7 +1153,7 @@ final class OHQDevice extends StateMachine implements CBPeripheralDelegate {
         @Override
         public void enter(@Nullable Object[] transferObjects) {
             mDelegate.onStateChanged(OHQDetailedState.WaitingForUpdateOfDatabaseChangeIncrement);
-            Long appDatabaseChangeIncrementValue = Types.autoCast(mOptions.get(OHQSessionOptionKey.DatabaseChangeIncrementValueKey));
+            Long appDatabaseChangeIncrementValue = Types.autoCast(mOptions.get(DatabaseChangeIncrementValueKey));
             if (null == appDatabaseChangeIncrementValue) {
                 _abort(OHQCompletionReason.OperationNotSupported);
                 return;
@@ -1164,12 +1164,12 @@ final class OHQDevice extends StateMachine implements CBPeripheralDelegate {
 
         @Override
         public boolean processMessage(@NonNull Message msg) {
-            boolean handle = StateMachine.NOT_HANDLED;
+            boolean handle = NOT_HANDLED;
             switch (msg.what) {
                 case EVT_UPDATE_CHAR_SUCCESS: {
                     CBCharacteristic characteristic = (CBCharacteristic) ((Object[])msg.obj)[0];
                     if (OHQUUIDDefines.Characteristic.DatabaseChangeIncrement.uuid().equals(characteristic.uuid())) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                         _didUpdateValueForDatabaseChangeIncrementCharacteristic(characteristic);
                     }
                     break;
@@ -1259,12 +1259,12 @@ final class OHQDevice extends StateMachine implements CBPeripheralDelegate {
 
         @Override
         public boolean processMessage(@NonNull Message msg) {
-            boolean handle = StateMachine.NOT_HANDLED;
+            boolean handle = NOT_HANDLED;
             switch (msg.what) {
                 case EVT_UPDATE_CHAR_SUCCESS: {
                     CBCharacteristic characteristic = (CBCharacteristic) ((Object[])msg.obj)[0];
                     if (characteristics.contains(characteristic)) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                         if (OHQUUIDDefines.Characteristic.DateofBirth.uuid().equals(characteristic.uuid())) {
                             _didUpdateValueForDateOfBirthCharacteristic(characteristic);
                         } else if (OHQUUIDDefines.Characteristic.Gender.uuid().equals(characteristic.uuid())) {
@@ -1394,12 +1394,12 @@ final class OHQDevice extends StateMachine implements CBPeripheralDelegate {
 
         @Override
         public boolean processMessage(@NonNull Message msg) {
-            boolean handle = StateMachine.NOT_HANDLED;
+            boolean handle = NOT_HANDLED;
             switch (msg.what) {
                 case EVT_WRITE_CHAR_SUCCESS: {
                     CBCharacteristic characteristic = (CBCharacteristic) msg.obj;
                     if (characteristics.containsKey(characteristic)) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                         if (OHQUUIDDefines.Characteristic.DateofBirth.uuid().equals(characteristic.uuid())) {
                             updatedUserData.put(OHQUserDataKey.DateOfBirthKey, mLatestUserData.get(OHQUserDataKey.DateOfBirthKey));
                         } else if (OHQUUIDDefines.Characteristic.Gender.uuid().equals(characteristic.uuid())) {
@@ -1469,19 +1469,19 @@ final class OHQDevice extends StateMachine implements CBPeripheralDelegate {
 
         @Override
         public boolean processMessage(@NonNull Message msg) {
-            boolean handle = StateMachine.NOT_HANDLED;
+            boolean handle = NOT_HANDLED;
             switch (msg.what) {
                 case EVT_WRITE_CHAR_SUCCESS: {
                     CBCharacteristic characteristic = (CBCharacteristic) msg.obj;
                     if (OHQUUIDDefines.Characteristic.RecordAccessControlPoint.uuid().equals(characteristic.uuid())) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                     }
                     break;
                 }
                 case EVT_UPDATE_CHAR_SUCCESS: {
                     CBCharacteristic characteristic = (CBCharacteristic) ((Object[])msg.obj)[0];
                     if (OHQUUIDDefines.Characteristic.RecordAccessControlPoint.uuid().equals(characteristic.uuid())) {
-                        handle = StateMachine.HANDLED;
+                        handle = HANDLED;
                         _didUpdateValueForRecordAccessControlPointCharacteristic(characteristic);
                     }
                     break;

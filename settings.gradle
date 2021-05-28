@@ -1,4 +1,3 @@
 include ':bluetooth'
 include ':app'
-include ':ohq-reference-code'
 rootProject.name = "HurayPhdBluetoothAndroid"
