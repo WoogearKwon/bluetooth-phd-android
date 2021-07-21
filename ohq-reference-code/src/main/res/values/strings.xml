@@ -1,5 +1,0 @@
-<resources>
-    <string name="app_name">AndroidCoreBluetooth</string>
-    <string name="success">성공</string>
-    <string name="failure">실패</string>
-</resources>
