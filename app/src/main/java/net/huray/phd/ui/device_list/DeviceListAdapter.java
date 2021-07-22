@@ -1,4 +1,4 @@
-package net.huray.phd.ui;
+package net.huray.phd.ui.device_list;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -49,27 +49,23 @@ public class DeviceListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View oldView, ViewGroup parent) {
+    public View getView(int position, View view, ViewGroup parent) {
         final LayoutInflater inflater = LayoutInflater.from(context);
-        View contentView = oldView;
 
-        if (contentView == null) {
-            contentView = inflater.inflate(R.layout.item_device_list, parent, false);
-            final DeviceViewHolder holder = new DeviceViewHolder();
-            holder.tvDeviceName = contentView.findViewById(R.id.tv_device_item);
+        if (view == null) {
+            view = inflater.inflate(R.layout.item_device_list, parent, false);
+            final ViewHolder holder = new ViewHolder();
 
-            setDeviceNames(holder.tvDeviceName, devices.get(position));
-            contentView.setTag(holder);
+            holder.tvDeviceName = view.findViewById(R.id.tv_device_item);
+            holder.tvDeviceName.setText(context.getString(devices.get(position).getName()));
+
+            view.setTag(holder);
         }
 
-        return contentView;
+        return view;
     }
 
-    private void setDeviceNames(TextView tv, DeviceType type) {
-        tv.setText(type.getName());
-    }
-
-    private class DeviceViewHolder {
+    private class ViewHolder {
         private TextView tvDeviceName;
     }
 }

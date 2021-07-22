@@ -1,4 +1,4 @@
-package net.huray.phd.ui;
+package net.huray.phd.ui.device_list;
 
 import android.Manifest;
 import android.content.Intent;
@@ -11,6 +11,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import net.huray.phd.R;
+import net.huray.phd.ui.scanning.DeviceScanActivity;
 import net.huray.phd.utils.Const;
 
 public class DeviceListActivity extends AppCompatActivity {

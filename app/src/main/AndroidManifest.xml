@@ -14,14 +14,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.DeviceListActivity">
+        <activity android:name=".ui.device_list.DeviceListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.DeviceScanActivity" />
+        <activity android:name=".ui.scanning.DeviceScanActivity" />
     </application>
 
 </manifest>

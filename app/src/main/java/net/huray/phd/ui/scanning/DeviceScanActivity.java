@@ -1,9 +1,11 @@
-package net.huray.phd.ui;
+package net.huray.phd.ui.scanning;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import net.huray.phd.R;
@@ -28,8 +30,13 @@ import jp.co.ohq.ble.enumerate.OHQDeviceCategory;
 public class DeviceScanActivity extends AppCompatActivity
         implements ScanController.Listener, SessionController.Listener, OmronDeviceListener {
 
+    private DeviceScanAdapter adapter;
+
     private DeviceType deviceType;
     private OmronBleDeviceManager omronManager;
+
+    private Button btnScan;
+    private TextView tvDescription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +45,7 @@ public class DeviceScanActivity extends AppCompatActivity
 
         setDeviceType();
         initViews();
-        initOmronManager();
+        initDeviceManager();
     }
 
     private void setDeviceType() {
@@ -48,7 +55,27 @@ public class DeviceScanActivity extends AppCompatActivity
 
     private void initViews() {
         TextView tvTitle = findViewById(R.id.tv_scan_title);
-        tvTitle.setText(deviceType.getName());
+        tvTitle.setText(getString(deviceType.getName()));
+
+        adapter = new DeviceScanAdapter(this, deviceType);
+        ListView listView = findViewById(R.id.lv_scanned_device_list);
+        listView.setAdapter(adapter);
+
+        btnScan = findViewById(R.id.btn_scan);
+        btnScan.setOnClickListener(v -> startScanOmron());
+
+        tvDescription = findViewById(R.id.tv_scan_description);
+    }
+
+    private void initDeviceManager() {
+        if (deviceType == DeviceType.OMRON_BP || deviceType == DeviceType.OMRON_WEIGHT) {
+            initOmronManager();
+            return;
+        }
+
+        if (deviceType == DeviceType.I_SENS_BS) {
+            return;
+        }
     }
 
     private void initOmronManager() {
@@ -61,17 +88,29 @@ public class DeviceScanActivity extends AppCompatActivity
         );
     }
 
-    private void startScan() {
-
-        if (!omronManager.isScanning()) {
-            omronManager.startScan();
+    private void startScanOmron() {
+        if (omronManager.isScanning()) {
+            stopScanOmron();
+            return;
         }
+        omronManager.startScan();
+        btnScan.setText(getString(R.string.stop_scan_device));
+        tvDescription.setText(getString(R.string.scanning_device));
+    }
+
+    private void stopScanOmron() {
+        omronManager.stopScan();
+        btnScan.setText(getString(R.string.start_scan_device));
+        tvDescription.setText(getString(R.string.click_device_scan_button));
     }
 
     // ScanListener
     @Override
     public void onScan(@NonNull @NotNull List<DiscoveredDevice> discoveredDevices) {
-
+        adapter.updateOmronDevices(discoveredDevices);
+//        discoveredDevices.stream()
+//                .map(device -> devices.add(new Device(deviceType.getName(), device.getAddress())));
+//        adapter.addDevices(devices);
     }
 
     @Override
