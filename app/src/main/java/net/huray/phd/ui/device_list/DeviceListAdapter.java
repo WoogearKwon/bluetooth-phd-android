@@ -5,10 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.huray.phd.R;
 import net.huray.phd.enumerate.DeviceType;
+import net.huray.phd.utils.PrefUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,13 +61,39 @@ public class DeviceListAdapter extends BaseAdapter {
             holder.tvDeviceName = view.findViewById(R.id.tv_device_item);
             holder.tvDeviceName.setText(context.getString(devices.get(position).getName()));
 
+            holder.ivIndicator = view.findViewById(R.id.iv_connection_indicator);
+            setIndicator(holder.ivIndicator, devices.get(position));
+
             view.setTag(holder);
         }
 
         return view;
     }
 
+    private void setIndicator(ImageView view, DeviceType type) {
+        if (type == DeviceType.OMRON_WEIGHT) {
+            boolean isOmronWeightConnected = PrefUtils.getOmronBleWeightDeviceAddress() != null;
+            setIndicatorOn(view, isOmronWeightConnected);
+            return;
+        }
+
+        if (type == DeviceType.OMRON_BP) {
+            boolean isOmronBpConnected = PrefUtils.getOmronBleBpDeviceAddress() != null;
+            setIndicatorOn(view, isOmronBpConnected);
+        }
+
+        if (type == DeviceType.I_SENS_BS) {
+            boolean isIsensBsConnected = PrefUtils.getIsensBleDeviceAddress() != null;
+            setIndicatorOn(view, isIsensBsConnected);
+        }
+    }
+
+    private void setIndicatorOn(ImageView view, boolean isConnected) {
+        if (isConnected) view.setImageResource(R.drawable.round_blue);
+    }
+
     private class ViewHolder {
         private TextView tvDeviceName;
+        private ImageView ivIndicator;
     }
 }

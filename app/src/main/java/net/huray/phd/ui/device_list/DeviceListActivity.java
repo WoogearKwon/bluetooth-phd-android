@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +27,12 @@ public class DeviceListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_device_list);
 
         requestPermissionIfNotGranted();
+        initViews();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         initViews();
     }
 

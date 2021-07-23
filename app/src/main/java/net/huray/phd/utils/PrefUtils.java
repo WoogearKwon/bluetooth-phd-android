@@ -56,4 +56,25 @@ public class PrefUtils {
         return App.getInstance().getSecurePreferences()
                 .getInt(Const.PREF_OMRON_WEIGHT_DEVICE_SEQ, 0);
     }
+
+    public static void setIsensBleDeviceInfo(@Nullable String deviceName,
+                                             @Nullable String deviceAddress) {
+        App.getInstance().getSecurePreferences()
+                .edit()
+                .putString(Const.PREF_ISENS_DEVICE_NAME, deviceName)
+                .putString(Const.PREF_ISENS_DEVICE_ADDRESS, deviceAddress)
+                .apply();
+    }
+
+    @Nullable
+    public static String getIsensBleDeviceName() {
+        return App.getInstance().getSecurePreferences()
+                .getString(Const.PREF_ISENS_DEVICE_NAME, null);
+    }
+
+    @Nullable
+    public static String getIsensBleDeviceAddress() {
+        return App.getInstance().getSecurePreferences()
+                .getString(Const.PREF_ISENS_DEVICE_ADDRESS, null);
+    }
 }

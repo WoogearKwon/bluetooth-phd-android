@@ -1,8 +1,5 @@
 package net.huray.phd.ui.scanning;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +10,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import net.huray.phd.R;
 import net.huray.phd.bluetooth.OmronBleDeviceManager;
@@ -108,12 +108,19 @@ public class OmronDeviceScanActivity extends AppCompatActivity
             return;
         }
 
+        deviceAddress = adapter.getDeviceAddress(position);
+        omronManager.connectWeightDevice(deviceAddress, userIndex, getUserData());
+
+        showLoadingView();
+    }
+
+    private Map<OHQUserDataKey, Object> getUserData() {
         Map<OHQUserDataKey, Object> userData = new HashMap<>();
         userData.put(OHQUserDataKey.DateOfBirthKey,  "2001-01-01");
         userData.put(OHQUserDataKey.HeightKey, new BigDecimal("170.5"));
         userData.put(OHQUserDataKey.GenderKey, OHQGender.Male);
-        omronManager.connectWeightDevice(adapter.getDeviceAddress(position), userIndex, userData);
-        showLoadingView();
+
+        return userData;
     }
 
     // ScanListener
@@ -192,14 +199,13 @@ public class OmronDeviceScanActivity extends AppCompatActivity
         hideLoadingView();
         Toast.makeText(this, "기기 연결 완료", Toast.LENGTH_SHORT).show();
 
-        // TODO: 오므론 연결 완료 // 전송 완료 로직 추가
         final boolean isCanceled = sessionData.getCompletionReason() == Canceled;
         final boolean isFailed = sessionData.getCompletionReason() == FailedToConnect;
         final boolean isFailedToRegister = sessionData.getCompletionReason() == FailedToRegisterUser;
         final boolean isTimeOut = sessionData.getCompletionReason() == ConnectionTimedOut;
 
         if (isFailedToRegister || isTimeOut) {
-            // TODO: fail
+            Toast.makeText(this, "기기 연결에 실패했습니다.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -208,10 +214,11 @@ public class OmronDeviceScanActivity extends AppCompatActivity
 
     private void completeRegister() {
         if (deviceType == DeviceType.OMRON_WEIGHT) {
-            PrefUtils.setOmronBleBpDeviceAddress(deviceAddress);
-        } else if (deviceType == DeviceType.OMRON_BP) {
             PrefUtils.setOmronBleWeightDeviceAddress(deviceAddress);
             PrefUtils.setOmronBleWeightDeviceUserIndex(userIndex);
+
+        } else if (deviceType == DeviceType.OMRON_BP) {
+            PrefUtils.setOmronBleBpDeviceAddress(deviceAddress);
         }
     }
 
