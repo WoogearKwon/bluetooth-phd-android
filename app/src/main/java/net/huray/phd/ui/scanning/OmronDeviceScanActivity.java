@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -13,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import net.huray.phd.R;
 import net.huray.phd.bluetooth.OmronBleDeviceManager;
@@ -55,7 +55,7 @@ public class OmronDeviceScanActivity extends AppCompatActivity
 
     private Button btnScan;
     private TextView tvDescription;
-    private ProgressBar progressBar;
+    private ConstraintLayout progressBarContainer;
     private List<Integer> radioButtons;
 
     private int userIndex = 0;
@@ -64,7 +64,7 @@ public class OmronDeviceScanActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_device_scan);
+        setContentView(R.layout.activity_omron_device_scan);
 
         setDeviceType();
         initViews();
@@ -123,12 +123,6 @@ public class OmronDeviceScanActivity extends AppCompatActivity
         return userData;
     }
 
-    // ScanListener
-    @Override
-    public void onScan(@NonNull @NotNull List<DiscoveredDevice> discoveredDevices) {
-        adapter.updateOmronDevices(discoveredDevices);
-    }
-
     private void initViews() {
         TextView tvTitle = findViewById(R.id.tv_scan_title);
         tvTitle.setText(getString(deviceType.getName()));
@@ -142,7 +136,10 @@ public class OmronDeviceScanActivity extends AppCompatActivity
         btnScan.setOnClickListener(v -> startScanOmron());
 
         tvDescription = findViewById(R.id.tv_scan_description);
-        progressBar = findViewById(R.id.progress_bar);
+        progressBarContainer = findViewById(R.id.progress_container);
+
+        Button btnStopConnection = findViewById(R.id.btn_stop_connection);
+        btnStopConnection.setOnClickListener(v -> omronManager.cancelSession());
 
         initRadioButtons();
     }
@@ -175,11 +172,17 @@ public class OmronDeviceScanActivity extends AppCompatActivity
     }
 
     private void showLoadingView() {
-        progressBar.setVisibility(View.VISIBLE);
+        progressBarContainer.setVisibility(View.VISIBLE);
     }
 
     private void hideLoadingView() {
-        progressBar.setVisibility(View.GONE);
+        progressBarContainer.setVisibility(View.GONE);
+    }
+
+    // ScanListener
+    @Override
+    public void onScan(@NonNull @NotNull List<DiscoveredDevice> discoveredDevices) {
+        adapter.updateOmronDevices(discoveredDevices);
     }
 
     @Override
@@ -197,18 +200,23 @@ public class OmronDeviceScanActivity extends AppCompatActivity
     public void onSessionComplete(@NonNull @NotNull SessionData sessionData) {
         Log.d("woogear", "onSessionComplete");
         hideLoadingView();
-        Toast.makeText(this, "기기 연결 완료", Toast.LENGTH_SHORT).show();
 
         final boolean isCanceled = sessionData.getCompletionReason() == Canceled;
         final boolean isFailed = sessionData.getCompletionReason() == FailedToConnect;
         final boolean isFailedToRegister = sessionData.getCompletionReason() == FailedToRegisterUser;
         final boolean isTimeOut = sessionData.getCompletionReason() == ConnectionTimedOut;
 
+        if (isCanceled || isFailed) {
+            Toast.makeText(this, "연결을 취소했습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (isFailedToRegister || isTimeOut) {
             Toast.makeText(this, "기기 연결에 실패했습니다.", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        Toast.makeText(this, "기기 연결 완료", Toast.LENGTH_SHORT).show();
         completeRegister();
     }
 
