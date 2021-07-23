@@ -78,6 +78,7 @@ class OmronBleDeviceManager(
     }
 
     fun connectWeightDevice(address: String, index: Int, user: Map<OHQUserDataKey, Any>) {
+        userData = user
         deviceAddress = address
         userIndex = index
 

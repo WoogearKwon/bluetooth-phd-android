@@ -11,7 +11,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import net.huray.phd.R;
-import net.huray.phd.ui.scanning.DeviceScanActivity;
+import net.huray.phd.ui.scanning.OmronDeviceScanActivity;
 import net.huray.phd.utils.Const;
 
 public class DeviceListActivity extends AppCompatActivity {
@@ -39,7 +39,7 @@ public class DeviceListActivity extends AppCompatActivity {
 
     private void moveToScanActivity(int position) {
         if (isPermissionGranted()) {
-            Intent intent = new Intent(this, DeviceScanActivity.class);
+            Intent intent = new Intent(this, OmronDeviceScanActivity.class);
             intent.putExtra(Const.EXTRA_DEVICE_TYPE, adapter.getDeviceTypeNumber(position));
             startActivity(intent);
             return;

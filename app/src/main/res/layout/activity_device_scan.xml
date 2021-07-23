@@ -4,55 +4,104 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.scanning.DeviceScanActivity">
+    tools:context=".ui.scanning.OmronDeviceScanActivity">
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_scan_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="20dp"
-        android:textSize="30sp"
+        android:gravity="center"
         android:text="OMRON 혈압계 스캔"
         android:textColor="@color/design_default_color_on_secondary"
-        android:gravity="center"/>
+        android:textSize="30sp"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_scan_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/tv_scan_title"
         android:layout_marginTop="10dp"
+        android:gravity="center"
         android:text="@string/click_device_scan_button"
-        android:textSize="18sp"
         android:textColor="@color/colorPrimaryDark"
-        android:gravity="center"/>
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_scan_title" />
 
     <Button
         android:id="@+id/btn_scan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/tv_scan_description"
         android:layout_margin="10dp"
+        android:text="@string/start_scan_device"
         android:textSize="16sp"
-        android:text="@string/start_scan_device"/>
+        app:layout_constraintTop_toBottomOf="@id/tv_scan_description" />
+
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/btn_scan">
+
+        <RadioButton
+            android:id="@+id/rb_one"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
+            android:text="user1" />
+
+        <RadioButton
+            android:id="@+id/rb_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
+            android:text="user2" />
+
+        <RadioButton
+            android:id="@+id/rb_three"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
+            android:text="user3" />
+
+        <RadioButton
+            android:id="@+id/rb_four"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
+            android:text="user4" />
+
+    </RadioGroup>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_scanned_devices"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:text="스캔된 디바이스 목록"
-        android:textSize="18sp"
         android:textColor="@color/design_default_color_on_secondary"
-        app:layout_constraintTop_toBottomOf="@+id/btn_scan"
-        android:layout_margin="10dp"/>
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@+id/radio_group" />
 
     <ListView
         android:id="@+id/lv_scanned_device_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        tools:listitem="@layout/item_scanned_device"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_scanned_devices"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        tools:listitem="@layout/item_scanned_device" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -34,6 +34,10 @@ public class DeviceScanAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public String getDeviceAddress(int position) {
+        return devices.get(position).getAddress();
+    }
+
     @Override
     public int getCount() {
         return devices.size();

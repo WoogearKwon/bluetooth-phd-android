@@ -3,8 +3,9 @@
     <string name="start_scan_device">디바이스 스캔</string>
     <string name="stop_scan_device">스캔 중지</string>
     <string name="click_device_scan_button">디바이스 스캔 버튼을 누르세요</string>
-    <string name="scanning_device">스캔 중입니다...</string>
+    <string name="scanning_device">스캔 중입니다…</string>
     <string name="omron_body_composition_monitor">오므론 체성분계 Omron HBF-222T</string>
     <string name="omron_blood_pressure_monitor">오므론 혈압계 Omron HEM-9200T</string>
     <string name="isens_care_sense_n_premier">아이센스 혈당계 CareSens N Premier</string>
+    <string name="select_user_index">사용자 번호를 선택해주세요.</string>
 </resources>
