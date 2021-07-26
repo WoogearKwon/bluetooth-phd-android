@@ -1,12 +1,13 @@
 package net.huray.phd.ui.request_data;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import net.huray.phd.R;
 import net.huray.phd.enumerate.DeviceType;
@@ -18,7 +19,7 @@ public class OmronRequestActivity extends AppCompatActivity {
 
     private Button btnRequest;
     private TextView tvDisconnect;
-    private ConstraintLayout progressBar;
+    private ConstraintLayout progressBar, userIndexContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,11 @@ public class OmronRequestActivity extends AppCompatActivity {
         ListView listView = findViewById(R.id.lv_requested_data_list);
 
         progressBar = findViewById(R.id.progress_container);
+        userIndexContainer = findViewById(R.id.constraint_user_index);
+
+        if (deviceType.isWeightDevice()) {
+            userIndexContainer.setVisibility(View.VISIBLE);
+        }
     }
 
     private void disconnectDevice() {

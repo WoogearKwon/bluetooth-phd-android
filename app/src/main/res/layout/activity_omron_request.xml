@@ -29,6 +29,36 @@
         android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@+id/tv_request_omron_title" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_user_index"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/tv_request_description"
+        android:visibility="gone"
+        android:layout_margin="10dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_index_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="User Index : "
+            android:textSize="16sp"
+            android:textColor="@color/design_default_color_on_secondary"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_user_index"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4"
+            android:textSize="16sp"
+            android:textColor="@color/design_default_color_on_secondary"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_index_title"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <Button
         android:id="@+id/btn_request_omron_data"
         android:layout_width="match_parent"
@@ -36,7 +66,7 @@
         android:layout_margin="10dp"
         android:text="@string/request_data"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/tv_request_description" />
+        app:layout_constraintTop_toBottomOf="@id/constraint_user_index" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_disconnect_omron_device"
