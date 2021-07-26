@@ -1,5 +1,6 @@
 package net.huray.phd.ui.scanning;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +24,7 @@ import net.huray.phd.bluetooth.model.entity.DiscoveredDevice;
 import net.huray.phd.bluetooth.model.entity.SessionData;
 import net.huray.phd.bluetooth.model.enumerate.OHQSessionType;
 import net.huray.phd.enumerate.DeviceType;
+import net.huray.phd.ui.request_data.OmronRequestActivity;
 import net.huray.phd.utils.Const;
 import net.huray.phd.utils.PrefUtils;
 
@@ -98,6 +100,10 @@ public class OmronDeviceScanActivity extends AppCompatActivity
 
     private void stopScanOmron() {
         omronManager.stopScan();
+        setViewForReadyToScan();
+    }
+
+    private void setViewForReadyToScan() {
         btnScan.setText(getString(R.string.start_scan_device));
         tvDescription.setText(getString(R.string.click_device_scan_button));
     }
@@ -116,7 +122,7 @@ public class OmronDeviceScanActivity extends AppCompatActivity
 
     private Map<OHQUserDataKey, Object> getUserData() {
         Map<OHQUserDataKey, Object> userData = new HashMap<>();
-        userData.put(OHQUserDataKey.DateOfBirthKey,  "2001-01-01");
+        userData.put(OHQUserDataKey.DateOfBirthKey, "2001-01-01");
         userData.put(OHQUserDataKey.HeightKey, new BigDecimal("170.5"));
         userData.put(OHQUserDataKey.GenderKey, OHQGender.Male);
 
@@ -152,7 +158,7 @@ public class OmronDeviceScanActivity extends AppCompatActivity
         radioButtons.add(R.id.rb_four);
 
         RadioGroup radioGroup = findViewById(R.id.radio_group);
-        if (deviceType == DeviceType.OMRON_WEIGHT) {
+        if (deviceType.isWeightDevice()) {
             radioGroup.setVisibility(View.VISIBLE);
             return;
         }
@@ -187,7 +193,7 @@ public class OmronDeviceScanActivity extends AppCompatActivity
 
     @Override
     public void onScanCompletion(@NonNull @NotNull OHQCompletionReason reason) {
-        Log.d("woogear", "");
+        Log.d("woogear", "onScanCompletion");
     }
 
     // SessionListener
@@ -207,27 +213,37 @@ public class OmronDeviceScanActivity extends AppCompatActivity
         final boolean isTimeOut = sessionData.getCompletionReason() == ConnectionTimedOut;
 
         if (isCanceled || isFailed) {
-            Toast.makeText(this, "연결을 취소했습니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.connection_canceled), Toast.LENGTH_SHORT).show();
+            setViewForReadyToScan();
             return;
         }
 
         if (isFailedToRegister || isTimeOut) {
-            Toast.makeText(this, "기기 연결에 실패했습니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.connection_failed), Toast.LENGTH_SHORT).show();
+            setViewForReadyToScan();
             return;
         }
 
-        Toast.makeText(this, "기기 연결 완료", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.connection_success), Toast.LENGTH_SHORT).show();
         completeRegister();
+        moveToRequestActivity();
     }
 
     private void completeRegister() {
-        if (deviceType == DeviceType.OMRON_WEIGHT) {
+        if (deviceType.isWeightDevice()) {
             PrefUtils.setOmronBleWeightDeviceAddress(deviceAddress);
             PrefUtils.setOmronBleWeightDeviceUserIndex(userIndex);
-
-        } else if (deviceType == DeviceType.OMRON_BP) {
-            PrefUtils.setOmronBleBpDeviceAddress(deviceAddress);
+            return;
         }
+
+        PrefUtils.setOmronBleBpDeviceAddress(deviceAddress);
+    }
+
+    private void moveToRequestActivity() {
+        Intent intent = new Intent(this, OmronRequestActivity.class);
+        intent.putExtra(Const.EXTRA_DEVICE_TYPE, deviceType.getNumber());
+        startActivity(intent);
+        finish();
     }
 
     // OmronListener

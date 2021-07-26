@@ -28,4 +28,16 @@ public enum DeviceType {
         if (this == OMRON_BP) return R.string.omron_blood_pressure_monitor;
         return R.string.isens_care_sense_n_premier;
     }
+
+    public boolean isWeightDevice() {
+        return this == OMRON_WEIGHT;
+    }
+
+    public boolean isBpDevice() {
+        return this == OMRON_BP;
+    }
+
+    public boolean isBsDevice() {
+        return this == I_SENS_BS;
+    }
 }

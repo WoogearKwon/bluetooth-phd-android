@@ -18,6 +18,7 @@ import java.util.List;
 public class DeviceListAdapter extends BaseAdapter {
     private final Context context;
     private final List<DeviceType> devices = new ArrayList<>();
+    private final List<Boolean> connectionStates = new ArrayList<>();
 
     public DeviceListAdapter(Context context) {
         this.context = context;
@@ -25,14 +26,26 @@ public class DeviceListAdapter extends BaseAdapter {
     }
 
     private void initDeviceList() {
+        initDeviceItems();
+        notifyDataSetChanged();
+    }
+
+    private void initDeviceItems() {
         devices.add(DeviceType.OMRON_WEIGHT);
         devices.add(DeviceType.OMRON_BP);
         devices.add(DeviceType.I_SENS_BS);
-        notifyDataSetChanged();
+
+        connectionStates.add(PrefUtils.getOmronBleWeightDeviceAddress() != null);
+        connectionStates.add(PrefUtils.getOmronBleBpDeviceAddress() != null);
+        connectionStates.add(PrefUtils.getIsensBleDeviceAddress() != null);
     }
 
     public int getDeviceTypeNumber(int position) {
         return devices.get(position).getNumber();
+    }
+
+    public boolean getDeviceConnectionState(int position) {
+        return connectionStates.get(position);
     }
 
     @Override
@@ -62,7 +75,7 @@ public class DeviceListAdapter extends BaseAdapter {
             holder.tvDeviceName.setText(context.getString(devices.get(position).getName()));
 
             holder.ivIndicator = view.findViewById(R.id.iv_connection_indicator);
-            setIndicator(holder.ivIndicator, devices.get(position));
+            setIndicator(holder.ivIndicator, position);
 
             view.setTag(holder);
         }
@@ -70,26 +83,8 @@ public class DeviceListAdapter extends BaseAdapter {
         return view;
     }
 
-    private void setIndicator(ImageView view, DeviceType type) {
-        if (type == DeviceType.OMRON_WEIGHT) {
-            boolean isOmronWeightConnected = PrefUtils.getOmronBleWeightDeviceAddress() != null;
-            setIndicatorOn(view, isOmronWeightConnected);
-            return;
-        }
-
-        if (type == DeviceType.OMRON_BP) {
-            boolean isOmronBpConnected = PrefUtils.getOmronBleBpDeviceAddress() != null;
-            setIndicatorOn(view, isOmronBpConnected);
-        }
-
-        if (type == DeviceType.I_SENS_BS) {
-            boolean isIsensBsConnected = PrefUtils.getIsensBleDeviceAddress() != null;
-            setIndicatorOn(view, isIsensBsConnected);
-        }
-    }
-
-    private void setIndicatorOn(ImageView view, boolean isConnected) {
-        if (isConnected) view.setImageResource(R.drawable.round_blue);
+    private void setIndicator(ImageView view, int position) {
+        if (connectionStates.get(position)) view.setImageResource(R.drawable.round_blue);
     }
 
     private class ViewHolder {
