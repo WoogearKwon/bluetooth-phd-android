@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -42,7 +43,7 @@ public class OmronRequestActivity extends AppCompatActivity {
         btnRequest = findViewById(R.id.btn_request_omron_data);
 
         tvDisconnect = findViewById(R.id.tv_disconnect_omron_device);
-        tvDisconnect.setOnClickListener(v -> disconnectDevice());
+        tvDisconnect.setOnClickListener(v -> showConfirmDialog());
 
         ListView listView = findViewById(R.id.lv_requested_data_list);
 
@@ -52,6 +53,21 @@ public class OmronRequestActivity extends AppCompatActivity {
         if (deviceType.isWeightDevice()) {
             userIndexContainer.setVisibility(View.VISIBLE);
         }
+    }
+    
+    private void showConfirmDialog() {
+        AlertDialog dialog = new AlertDialog.Builder(this).create();
+        dialog.setTitle(getString(R.string.alert));
+        dialog.setMessage(getString(R.string.sure_to_disconnect));
+        dialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cacel), (dialogInterface, i) -> {
+            dialog.dismiss();
+        });
+        dialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.disconnect), (dialogInterface, i) -> {
+            disconnectDevice();
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 
     private void disconnectDevice() {
