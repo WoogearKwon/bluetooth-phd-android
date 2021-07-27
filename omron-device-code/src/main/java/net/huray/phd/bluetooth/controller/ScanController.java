@@ -227,6 +227,7 @@ public class ScanController {
 
     public interface Listener {
         void onScan(@NonNull List<DiscoveredDevice> discoveredDevices);
+
         void onScanCompletion(@NonNull final OHQCompletionReason reason);
     }
 }

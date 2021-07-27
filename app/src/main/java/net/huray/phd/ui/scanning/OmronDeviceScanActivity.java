@@ -2,7 +2,6 @@ package net.huray.phd.ui.scanning;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -17,11 +16,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import net.huray.phd.R;
 import net.huray.phd.bluetooth.OmronBleDeviceManager;
-import net.huray.phd.bluetooth.controller.ScanController;
-import net.huray.phd.bluetooth.controller.SessionController;
 import net.huray.phd.bluetooth.listener.OmronDeviceListener;
 import net.huray.phd.bluetooth.model.entity.DiscoveredDevice;
+import net.huray.phd.bluetooth.model.entity.OmronOption;
 import net.huray.phd.bluetooth.model.entity.SessionData;
+import net.huray.phd.bluetooth.model.entity.WeightDeviceInfo;
 import net.huray.phd.bluetooth.model.enumerate.OHQSessionType;
 import net.huray.phd.enumerate.DeviceType;
 import net.huray.phd.ui.request_data.OmronRequestActivity;
@@ -30,25 +29,19 @@ import net.huray.phd.utils.PrefUtils;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import jp.co.ohq.ble.enumerate.OHQCompletionReason;
 import jp.co.ohq.ble.enumerate.OHQConnectionState;
-import jp.co.ohq.ble.enumerate.OHQDeviceCategory;
 import jp.co.ohq.ble.enumerate.OHQGender;
-import jp.co.ohq.ble.enumerate.OHQUserDataKey;
 
 import static jp.co.ohq.ble.enumerate.OHQCompletionReason.Canceled;
 import static jp.co.ohq.ble.enumerate.OHQCompletionReason.ConnectionTimedOut;
 import static jp.co.ohq.ble.enumerate.OHQCompletionReason.FailedToConnect;
 import static jp.co.ohq.ble.enumerate.OHQCompletionReason.FailedToRegisterUser;
 
-public class OmronDeviceScanActivity extends AppCompatActivity
-        implements ScanController.Listener, SessionController.Listener, OmronDeviceListener {
+public class OmronDeviceScanActivity extends AppCompatActivity implements OmronDeviceListener {
 
     private DeviceScanAdapter adapter;
 
@@ -80,10 +73,8 @@ public class OmronDeviceScanActivity extends AppCompatActivity
 
     private void initDeviceManager() {
         omronManager = new OmronBleDeviceManager(
-                OHQDeviceCategory.BodyCompositionMonitor,
+                deviceType.getOmronDeviceCategory(),
                 OHQSessionType.REGISTER,
-                this,
-                this,
                 this
         );
     }
@@ -115,18 +106,14 @@ public class OmronDeviceScanActivity extends AppCompatActivity
         }
 
         deviceAddress = adapter.getDeviceAddress(position);
-        omronManager.connectWeightDevice(deviceAddress, userIndex, getUserData());
+
+        WeightDeviceInfo deviceData = new WeightDeviceInfo(
+                deviceAddress,
+                userIndex,
+                OmronOption.getWeightUserData("2001-01-01", "170.5", OHQGender.Male));
+        omronManager.connectWeightDevice(deviceData);
 
         showLoadingView();
-    }
-
-    private Map<OHQUserDataKey, Object> getUserData() {
-        Map<OHQUserDataKey, Object> userData = new HashMap<>();
-        userData.put(OHQUserDataKey.DateOfBirthKey, "2001-01-01");
-        userData.put(OHQUserDataKey.HeightKey, new BigDecimal("170.5"));
-        userData.put(OHQUserDataKey.GenderKey, OHQGender.Male);
-
-        return userData;
     }
 
     private void initViews() {
@@ -185,50 +172,6 @@ public class OmronDeviceScanActivity extends AppCompatActivity
         progressBarContainer.setVisibility(View.GONE);
     }
 
-    // ScanListener
-    @Override
-    public void onScan(@NonNull @NotNull List<DiscoveredDevice> discoveredDevices) {
-        adapter.updateOmronDevices(discoveredDevices);
-    }
-
-    @Override
-    public void onScanCompletion(@NonNull @NotNull OHQCompletionReason reason) {
-        Log.d("woogear", "onScanCompletion");
-    }
-
-    // SessionListener
-    @Override
-    public void onConnectionStateChanged(@NonNull @NotNull OHQConnectionState connectionState) {
-        Log.d("woogear", "onConnectionStateChanged");
-    }
-
-    @Override
-    public void onSessionComplete(@NonNull @NotNull SessionData sessionData) {
-        Log.d("woogear", "onSessionComplete");
-        hideLoadingView();
-
-        final boolean isCanceled = sessionData.getCompletionReason() == Canceled;
-        final boolean isFailed = sessionData.getCompletionReason() == FailedToConnect;
-        final boolean isFailedToRegister = sessionData.getCompletionReason() == FailedToRegisterUser;
-        final boolean isTimeOut = sessionData.getCompletionReason() == ConnectionTimedOut;
-
-        if (isCanceled || isFailed) {
-            Toast.makeText(this, getString(R.string.connection_canceled), Toast.LENGTH_SHORT).show();
-            setViewForReadyToScan();
-            return;
-        }
-
-        if (isFailedToRegister || isTimeOut) {
-            Toast.makeText(this, getString(R.string.connection_failed), Toast.LENGTH_SHORT).show();
-            setViewForReadyToScan();
-            return;
-        }
-
-        Toast.makeText(this, getString(R.string.connection_success), Toast.LENGTH_SHORT).show();
-        completeRegister();
-        moveToRequestActivity();
-    }
-
     private void completeRegister() {
         if (deviceType.isWeightDevice()) {
             PrefUtils.setOmronBleWeightDeviceAddress(deviceAddress);
@@ -246,29 +189,44 @@ public class OmronDeviceScanActivity extends AppCompatActivity
         finish();
     }
 
+    @Override
+    public void onConnectionStateChanged(OHQConnectionState connectionState) {
+    }
+
     // OmronListener
     @Override
-    public void onScanned(List<DiscoveredDevice> discoveredDevice) {
-        Log.d("woogear", "onScanned");
+    public void onScanned(List<DiscoveredDevice> discoveredDevices) {
+        adapter.updateOmronDevices(discoveredDevices);
     }
 
     @Override
-    public void onConnected() {
-        Log.d("woogear", "onConnected");
+    public void onScanCompleted(@NonNull @NotNull OHQCompletionReason reason) {
+        // TODO: 이게 꼭 필요한지 확인
     }
 
     @Override
-    public void onFailed() {
-        Log.d("woogear", "onFailed");
-    }
+    public void onSessionComplete(@NonNull @NotNull SessionData sessionData) {
+        hideLoadingView();
 
-    @Override
-    public void onReceiveData(boolean isSuccess) {
-        Log.d("woogear", "onReceiveData");
-    }
+        final boolean isCanceled = sessionData.getCompletionReason() == Canceled;
+        final boolean isFailed = sessionData.getCompletionReason() == FailedToConnect;
+        final boolean isFailedToRegister = sessionData.getCompletionReason() == FailedToRegisterUser;
+        final boolean isTimeOut = sessionData.getCompletionReason() == ConnectionTimedOut;
 
-    @Override
-    public void onCanceled() {
-        Log.d("woogear", "onCanceled");
+        if (isCanceled) {
+            Toast.makeText(this, getString(R.string.connection_canceled), Toast.LENGTH_SHORT).show();
+            setViewForReadyToScan();
+            return;
+        }
+
+        if (isFailed || isFailedToRegister || isTimeOut) {
+            Toast.makeText(this, getString(R.string.connection_failed), Toast.LENGTH_SHORT).show();
+            setViewForReadyToScan();
+            return;
+        }
+
+        Toast.makeText(this, getString(R.string.connection_success), Toast.LENGTH_SHORT).show();
+        completeRegister();
+        moveToRequestActivity();
     }
 }

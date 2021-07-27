@@ -2,10 +2,12 @@ package net.huray.phd.enumerate;
 
 import net.huray.phd.R;
 
+import jp.co.ohq.ble.enumerate.OHQDeviceCategory;
+
 public enum DeviceType {
     OMRON_WEIGHT(0),
     OMRON_BP(1),
-    I_SENS_BS(3);
+    I_SENS_BS(2);
 
     private final int number;
 
@@ -27,6 +29,18 @@ public enum DeviceType {
         if (this == OMRON_WEIGHT) return R.string.omron_body_composition_monitor;
         if (this == OMRON_BP) return R.string.omron_blood_pressure_monitor;
         return R.string.isens_care_sense_n_premier;
+    }
+
+    public OHQDeviceCategory getOmronDeviceCategory() {
+        if (isWeightDevice()) {
+            return OHQDeviceCategory.BodyCompositionMonitor;
+        }
+
+        if (isBpDevice()) {
+            return OHQDeviceCategory.BloodPressureMonitor;
+        }
+
+        throw new IllegalStateException("Blood Sugar device is NOT Omron device.");
     }
 
     public boolean isWeightDevice() {

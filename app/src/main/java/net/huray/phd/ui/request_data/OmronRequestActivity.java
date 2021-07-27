@@ -6,21 +6,43 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import net.huray.phd.R;
+import net.huray.phd.bluetooth.OmronBleDeviceManager;
+import net.huray.phd.bluetooth.controller.ScanController;
+import net.huray.phd.bluetooth.controller.SessionController;
+import net.huray.phd.bluetooth.listener.OmronDeviceListener;
+import net.huray.phd.bluetooth.model.entity.DiscoveredDevice;
+import net.huray.phd.bluetooth.model.entity.SessionData;
+import net.huray.phd.bluetooth.model.enumerate.OHQSessionType;
 import net.huray.phd.enumerate.DeviceType;
 import net.huray.phd.utils.Const;
 import net.huray.phd.utils.PrefUtils;
 
-public class OmronRequestActivity extends AppCompatActivity {
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
+import jp.co.ohq.ble.enumerate.OHQCompletionReason;
+import jp.co.ohq.ble.enumerate.OHQConnectionState;
+import jp.co.ohq.ble.enumerate.OHQDeviceCategory;
+
+public class OmronRequestActivity extends AppCompatActivity
+        implements OmronDeviceListener {
+
+    private OmronBleDeviceManager omronManager;
+
     private DeviceType deviceType;
 
     private Button btnRequest;
     private TextView tvDisconnect;
     private ConstraintLayout progressBar, userIndexContainer;
+
+    private OmronDataAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +51,7 @@ public class OmronRequestActivity extends AppCompatActivity {
 
         setDeviceType();
         initViews();
+        initDeviceManager();
     }
 
     private void setDeviceType() {
@@ -45,7 +68,9 @@ public class OmronRequestActivity extends AppCompatActivity {
         tvDisconnect = findViewById(R.id.tv_disconnect_omron_device);
         tvDisconnect.setOnClickListener(v -> showConfirmDialog());
 
+        adapter = new OmronDataAdapter(this, deviceType);
         ListView listView = findViewById(R.id.lv_requested_data_list);
+        listView.setAdapter(adapter);
 
         progressBar = findViewById(R.id.progress_container);
         userIndexContainer = findViewById(R.id.constraint_user_index);
@@ -82,5 +107,33 @@ public class OmronRequestActivity extends AppCompatActivity {
         }
 
         finish();
+    }
+
+    private void initDeviceManager() {
+        omronManager = new OmronBleDeviceManager(
+                deviceType.getOmronDeviceCategory(),
+                OHQSessionType.TRANSFER,
+                this
+        );
+    }
+
+    @Override
+    public void onScanCompleted(@NonNull @NotNull OHQCompletionReason reason) {
+
+    }
+
+    @Override
+    public void onConnectionStateChanged(@NonNull @NotNull OHQConnectionState connectionState) {
+
+    }
+
+    @Override
+    public void onSessionComplete(@NonNull @NotNull SessionData sessionData) {
+
+    }
+
+    @Override
+    public void onScanned(List<DiscoveredDevice> discoveredDevice) {
+
     }
 }
