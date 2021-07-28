@@ -13,7 +13,5 @@ public interface OmronDeviceListener {
 
     void onScanned(List<DiscoveredDevice> discoveredDevices);
 
-    void onScanCompleted(final OHQCompletionReason reason);
-
     void onSessionComplete(SessionData sessionData);
 }

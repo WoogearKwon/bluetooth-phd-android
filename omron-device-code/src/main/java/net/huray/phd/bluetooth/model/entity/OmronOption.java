@@ -49,6 +49,9 @@ public class OmronOption {
         );
     }
 
+    /**
+     * 체성분계, 혈압계 공통 옵션 설정
+     * */
     public static Map<OHQSessionOptionKey, Object> getOptionsKeys(OHQSessionType sessionType) {
         Map<OHQSessionOptionKey, Object> options = new HashMap<>();
         long waitTime = sessionType == OHQSessionType.REGISTER ? REGISTER_WAIT_TIME : REQUEST_WAIT_TIME;
@@ -68,7 +71,7 @@ public class OmronOption {
     }
 
     /**
-     * 체성분계 HBF-222T 연결 옵션을 리턴
+     * 체성분계 옵션을 추가
      */
     private static void setWeightDeviceOptionKeys(Map<OHQSessionOptionKey, Object> options, WeightDeviceInfo info) {
         if (info.getSessionType() == OHQSessionType.REGISTER) {
@@ -86,7 +89,7 @@ public class OmronOption {
     }
 
     /**
-     * 오므론 체성분계 HBF-222T 데이터 전송시 사용하는 옵션을 리턴
+     * 오므론 체성분계 HBF-222T 데이터 전송시 사용하는 옵션을 추가
      *
      * @SequenceNumberOfFirstRecordToReadKey 이걸 사용하지 않으면 항상 체성분계에 저장된 모든 기록을 가져옴
      * 예를 들어 방금 체성분계에 101번째 기록이 정되었다면 sequenceNumber로 101을 전달해줘서 앱에 저장되지 않은 최근

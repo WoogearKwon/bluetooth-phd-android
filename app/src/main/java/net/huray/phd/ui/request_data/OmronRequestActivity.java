@@ -39,7 +39,7 @@ public class OmronRequestActivity extends AppCompatActivity
     private DeviceType deviceType;
 
     private Button btnRequest;
-    private TextView tvDisconnect;
+    private TextView tvDisconnect, tvUserIndex;
     private ConstraintLayout progressBar, userIndexContainer;
 
     private OmronDataAdapter adapter;
@@ -74,9 +74,11 @@ public class OmronRequestActivity extends AppCompatActivity
 
         progressBar = findViewById(R.id.progress_container);
         userIndexContainer = findViewById(R.id.constraint_user_index);
+        tvUserIndex = findViewById(R.id.tv_user_index);
 
         if (deviceType.isWeightDevice()) {
             userIndexContainer.setVisibility(View.VISIBLE);
+            tvUserIndex.setText(String.valueOf(PrefUtils.getOmronBleWeightDeviceUserIndex()));
         }
     }
     
@@ -115,11 +117,6 @@ public class OmronRequestActivity extends AppCompatActivity
                 OHQSessionType.TRANSFER,
                 this
         );
-    }
-
-    @Override
-    public void onScanCompleted(@NonNull @NotNull OHQCompletionReason reason) {
-
     }
 
     @Override

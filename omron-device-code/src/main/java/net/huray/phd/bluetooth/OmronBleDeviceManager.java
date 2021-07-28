@@ -26,22 +26,23 @@ import jp.co.ohq.ble.enumerate.OHQUserDataKey;
 import jp.co.ohq.utility.Handler;
 
 public class OmronBleDeviceManager implements ScanController.Listener, SessionController.Listener {
-    private final OHQDeviceCategory deviceCategory;
-    private final OHQSessionType sessionType;
-    private final OmronDeviceListener omronListener;
-
     private final ScanController scanController = new ScanController(this);
     private final SessionController sessionController = new SessionController(this);
     private final LoggingManager loggingManager = new LoggingManager();
 
+    private final OHQDeviceCategory deviceCategory;
+    private final OHQSessionType sessionType;
+    private final OmronDeviceListener omronListener;
+    private Map<OHQUserDataKey, Object> userData;
+
     private String deviceAddress;
     private int userIndex = -1;
-    private boolean isScanning = false;
-    private Map<OHQUserDataKey, Object> userData;
     private int sequenceNumber = -1;
     private int incrementKey = -1;
+    private boolean isScanning = false;
 
-    public OmronBleDeviceManager(OHQDeviceCategory deviceType, OHQSessionType sessionType, OmronDeviceListener omronListener) {
+    public OmronBleDeviceManager(OHQDeviceCategory deviceType, OHQSessionType sessionType,
+                                 OmronDeviceListener omronListener) {
         this.deviceCategory = deviceType;
         this.sessionType = sessionType;
         this.omronListener = omronListener;
@@ -54,9 +55,7 @@ public class OmronBleDeviceManager implements ScanController.Listener, SessionCo
     public void startScan() {
         scanController.setFilteringDeviceCategory(deviceCategory);
 
-        if (isScanning) {
-            return;
-        }
+        if (isScanning) return;
 
         isScanning = true;
         scanController.startScan();
@@ -157,7 +156,6 @@ public class OmronBleDeviceManager implements ScanController.Listener, SessionCo
 
     @Override
     public void onScanCompletion(@NonNull @NotNull OHQCompletionReason reason) {
-        omronListener.onScanCompleted(reason);
     }
 
     @Override

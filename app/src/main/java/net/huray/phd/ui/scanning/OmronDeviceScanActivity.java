@@ -44,17 +44,17 @@ import static jp.co.ohq.ble.enumerate.OHQCompletionReason.FailedToRegisterUser;
 public class OmronDeviceScanActivity extends AppCompatActivity implements OmronDeviceListener {
 
     private DeviceScanAdapter adapter;
-
     private DeviceType deviceType;
     private OmronBleDeviceManager omronManager;
 
     private Button btnScan;
     private TextView tvDescription;
     private ConstraintLayout progressBarContainer;
-    private List<Integer> radioButtons;
 
     private int userIndex = 0;
     private String deviceAddress;
+
+    private List<Integer> radioButtons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,15 +193,9 @@ public class OmronDeviceScanActivity extends AppCompatActivity implements OmronD
     public void onConnectionStateChanged(OHQConnectionState connectionState) {
     }
 
-    // OmronListener
     @Override
     public void onScanned(List<DiscoveredDevice> discoveredDevices) {
         adapter.updateOmronDevices(discoveredDevices);
-    }
-
-    @Override
-    public void onScanCompleted(@NonNull @NotNull OHQCompletionReason reason) {
-        // TODO: 이게 꼭 필요한지 확인
     }
 
     @Override
