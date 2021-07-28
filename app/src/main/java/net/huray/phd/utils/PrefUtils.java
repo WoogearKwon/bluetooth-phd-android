@@ -51,10 +51,18 @@ public class PrefUtils {
                 .apply();
     }
 
-    @Nullable
     public static int getOmronBleWeightDeviceSequenceNumber() {
         return App.getInstance().getSecurePreferences()
                 .getInt(Const.PREF_OMRON_WEIGHT_DEVICE_SEQ, 0);
+    }
+
+    public static void removeOmronWeightDeice() {
+        App.getInstance().getSecurePreferences()
+                .edit()
+                .putString(Const.PREF_OMRON_WEIGHT_DEVICE_ADDRESS, null)
+                .putInt(Const.PREF_OMRON_WEIGHT_DEVICE_USER_INDEX, -1)
+                .putInt(Const.PREF_OMRON_WEIGHT_DEVICE_SEQ, -1)
+                .apply();
     }
 
     public static void setIsensBleDeviceInfo(@Nullable String deviceName,

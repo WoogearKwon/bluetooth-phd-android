@@ -90,9 +90,7 @@ public class OmronRequestActivity extends AppCompatActivity implements OmronBleD
 
     private void disconnectDevice() {
         if (deviceType.isWeightDevice()) {
-            PrefUtils.setOmronBleWeightDeviceAddress(null);
-            PrefUtils.setOmronBleWeightDeviceUserIndex(-1);
-            PrefUtils.setOmronBleWeightDeviceSequenceNumber(-1);
+            PrefUtils.removeOmronWeightDeice();
         }
 
         if (deviceType.isBpDevice()) {
