@@ -6,33 +6,24 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import net.huray.phd.R;
 import net.huray.phd.bluetooth.OmronBleDeviceManager;
-import net.huray.phd.bluetooth.controller.ScanController;
-import net.huray.phd.bluetooth.controller.SessionController;
-import net.huray.phd.bluetooth.listener.OmronDeviceListener;
-import net.huray.phd.bluetooth.model.entity.DiscoveredDevice;
-import net.huray.phd.bluetooth.model.entity.SessionData;
 import net.huray.phd.bluetooth.model.enumerate.OHQSessionType;
 import net.huray.phd.enumerate.DeviceType;
 import net.huray.phd.utils.Const;
 import net.huray.phd.utils.PrefUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
+import java.util.Map;
 
 import jp.co.ohq.ble.enumerate.OHQCompletionReason;
-import jp.co.ohq.ble.enumerate.OHQConnectionState;
-import jp.co.ohq.ble.enumerate.OHQDeviceCategory;
+import jp.co.ohq.ble.enumerate.OHQMeasurementRecordKey;
 
-public class OmronRequestActivity extends AppCompatActivity
-        implements OmronDeviceListener {
+public class OmronRequestActivity extends AppCompatActivity implements OmronBleDeviceManager.TransferListener {
 
     private OmronBleDeviceManager omronManager;
 
@@ -115,22 +106,16 @@ public class OmronRequestActivity extends AppCompatActivity
         omronManager = new OmronBleDeviceManager(
                 deviceType.getOmronDeviceCategory(),
                 OHQSessionType.TRANSFER,
-                this
-        );
+                this);
     }
 
     @Override
-    public void onConnectionStateChanged(@NonNull @NotNull OHQConnectionState connectionState) {
-
-    }
-
-    @Override
-    public void onSessionComplete(@NonNull @NotNull SessionData sessionData) {
+    public void onTransferFailed(OHQCompletionReason reason) {
 
     }
 
     @Override
-    public void onScanned(List<DiscoveredDevice> discoveredDevice) {
+    public void onTransferSuccess(List<Map<OHQMeasurementRecordKey, Object>> results) {
 
     }
 }

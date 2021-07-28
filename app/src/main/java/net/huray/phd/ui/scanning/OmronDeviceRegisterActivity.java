@@ -16,7 +16,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import net.huray.phd.R;
 import net.huray.phd.bluetooth.OmronBleDeviceManager;
-import net.huray.phd.bluetooth.listener.OmronDeviceListener;
 import net.huray.phd.bluetooth.model.entity.DiscoveredDevice;
 import net.huray.phd.bluetooth.model.entity.OmronOption;
 import net.huray.phd.bluetooth.model.entity.SessionData;
@@ -33,7 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jp.co.ohq.ble.enumerate.OHQCompletionReason;
-import jp.co.ohq.ble.enumerate.OHQConnectionState;
 import jp.co.ohq.ble.enumerate.OHQGender;
 
 import static jp.co.ohq.ble.enumerate.OHQCompletionReason.Canceled;
@@ -41,7 +39,7 @@ import static jp.co.ohq.ble.enumerate.OHQCompletionReason.ConnectionTimedOut;
 import static jp.co.ohq.ble.enumerate.OHQCompletionReason.FailedToConnect;
 import static jp.co.ohq.ble.enumerate.OHQCompletionReason.FailedToRegisterUser;
 
-public class OmronDeviceScanActivity extends AppCompatActivity implements OmronDeviceListener {
+public class OmronDeviceRegisterActivity extends AppCompatActivity implements OmronBleDeviceManager.RegisterListener {
 
     private DeviceScanAdapter adapter;
     private DeviceType deviceType;
@@ -59,7 +57,7 @@ public class OmronDeviceScanActivity extends AppCompatActivity implements OmronD
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_omron_device_scan);
+        setContentView(R.layout.activity_omron_device_register);
 
         setDeviceType();
         initViews();
@@ -75,8 +73,7 @@ public class OmronDeviceScanActivity extends AppCompatActivity implements OmronD
         omronManager = new OmronBleDeviceManager(
                 deviceType.getOmronDeviceCategory(),
                 OHQSessionType.REGISTER,
-                this
-        );
+                this);
     }
 
     private void startScanOmron() {
@@ -190,22 +187,18 @@ public class OmronDeviceScanActivity extends AppCompatActivity implements OmronD
     }
 
     @Override
-    public void onConnectionStateChanged(OHQConnectionState connectionState) {
-    }
-
-    @Override
     public void onScanned(List<DiscoveredDevice> discoveredDevices) {
         adapter.updateOmronDevices(discoveredDevices);
     }
 
     @Override
-    public void onSessionComplete(@NonNull @NotNull SessionData sessionData) {
+    public void onRegisterFailed(OHQCompletionReason reason) {
         hideLoadingView();
 
-        final boolean isCanceled = sessionData.getCompletionReason() == Canceled;
-        final boolean isFailed = sessionData.getCompletionReason() == FailedToConnect;
-        final boolean isFailedToRegister = sessionData.getCompletionReason() == FailedToRegisterUser;
-        final boolean isTimeOut = sessionData.getCompletionReason() == ConnectionTimedOut;
+        final boolean isCanceled = reason == Canceled;
+        final boolean isFailed = reason == FailedToConnect;
+        final boolean isFailedToRegister = reason == FailedToRegisterUser;
+        final boolean isTimeOut = reason == ConnectionTimedOut;
 
         if (isCanceled) {
             Toast.makeText(this, getString(R.string.connection_canceled), Toast.LENGTH_SHORT).show();
@@ -216,8 +209,12 @@ public class OmronDeviceScanActivity extends AppCompatActivity implements OmronD
         if (isFailed || isFailedToRegister || isTimeOut) {
             Toast.makeText(this, getString(R.string.connection_failed), Toast.LENGTH_SHORT).show();
             setViewForReadyToScan();
-            return;
         }
+    }
+
+    @Override
+    public void onRegisterSuccess() {
+        hideLoadingView();
 
         Toast.makeText(this, getString(R.string.connection_success), Toast.LENGTH_SHORT).show();
         completeRegister();

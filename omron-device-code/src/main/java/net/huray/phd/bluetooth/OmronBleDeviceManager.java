@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import net.huray.phd.bluetooth.controller.ScanController;
 import net.huray.phd.bluetooth.controller.SessionController;
 import net.huray.phd.bluetooth.controller.util.AppLog;
-import net.huray.phd.bluetooth.listener.OmronDeviceListener;
 import net.huray.phd.bluetooth.model.entity.DiscoveredDevice;
 import net.huray.phd.bluetooth.model.entity.OmronOption;
 import net.huray.phd.bluetooth.model.entity.SessionData;
@@ -21,9 +20,15 @@ import java.util.Map;
 import jp.co.ohq.ble.enumerate.OHQCompletionReason;
 import jp.co.ohq.ble.enumerate.OHQConnectionState;
 import jp.co.ohq.ble.enumerate.OHQDeviceCategory;
+import jp.co.ohq.ble.enumerate.OHQMeasurementRecordKey;
 import jp.co.ohq.ble.enumerate.OHQSessionOptionKey;
 import jp.co.ohq.ble.enumerate.OHQUserDataKey;
 import jp.co.ohq.utility.Handler;
+
+import static jp.co.ohq.ble.enumerate.OHQCompletionReason.Canceled;
+import static jp.co.ohq.ble.enumerate.OHQCompletionReason.ConnectionTimedOut;
+import static jp.co.ohq.ble.enumerate.OHQCompletionReason.FailedToConnect;
+import static jp.co.ohq.ble.enumerate.OHQCompletionReason.FailedToRegisterUser;
 
 public class OmronBleDeviceManager implements ScanController.Listener, SessionController.Listener {
     private final ScanController scanController = new ScanController(this);
@@ -32,8 +37,10 @@ public class OmronBleDeviceManager implements ScanController.Listener, SessionCo
 
     private final OHQDeviceCategory deviceCategory;
     private final OHQSessionType sessionType;
-    private final OmronDeviceListener omronListener;
     private Map<OHQUserDataKey, Object> userData;
+
+    private RegisterListener registerListener;
+    private TransferListener transferListener;
 
     private String deviceAddress;
     private int userIndex = -1;
@@ -41,11 +48,23 @@ public class OmronBleDeviceManager implements ScanController.Listener, SessionCo
     private int incrementKey = -1;
     private boolean isScanning = false;
 
-    public OmronBleDeviceManager(OHQDeviceCategory deviceType, OHQSessionType sessionType,
-                                 OmronDeviceListener omronListener) {
+    private OmronBleDeviceManager(OHQDeviceCategory deviceType, OHQSessionType sessionType) {
         this.deviceCategory = deviceType;
         this.sessionType = sessionType;
-        this.omronListener = omronListener;
+    }
+
+    public OmronBleDeviceManager(OHQDeviceCategory deviceType,
+                                 OHQSessionType sessionType,
+                                 RegisterListener listener) {
+        this(deviceType, sessionType);
+        this.registerListener = listener;
+    }
+
+    public OmronBleDeviceManager(OHQDeviceCategory deviceType,
+                                 OHQSessionType sessionType,
+                                 TransferListener listener) {
+        this(deviceType, sessionType);
+        this.transferListener = listener;
     }
 
     public boolean isScanning() {
@@ -151,7 +170,9 @@ public class OmronBleDeviceManager implements ScanController.Listener, SessionCo
 
     @Override
     public void onScan(@NonNull @NotNull List<DiscoveredDevice> discoveredDevices) {
-        omronListener.onScanned(discoveredDevices);
+//        omronListener.onScanned(discoveredDevices);
+        throwExceptionForScanListener();
+        registerListener.onScanned(discoveredDevices);
     }
 
     @Override
@@ -160,11 +181,65 @@ public class OmronBleDeviceManager implements ScanController.Listener, SessionCo
 
     @Override
     public void onConnectionStateChanged(@NonNull @NotNull OHQConnectionState connectionState) {
-        omronListener.onConnectionStateChanged(connectionState);
     }
 
     @Override
     public void onSessionComplete(@NonNull @NotNull SessionData sessionData) {
-        omronListener.onSessionComplete(sessionData);
+        OHQCompletionReason reason = sessionData.getCompletionReason();
+        final boolean isCanceled = reason == Canceled;
+        final boolean isFailed = reason == FailedToConnect;
+        final boolean isFailedToRegister = reason == FailedToRegisterUser;
+        final boolean isTimeOut = reason == ConnectionTimedOut;
+
+        if (isCanceled || isFailed || isFailedToRegister || isTimeOut) {
+            setSessionFailed(sessionData.getCompletionReason());
+            return;
+        }
+
+        if (sessionType == OHQSessionType.REGISTER) {
+            throwExceptionForScanListener();
+            registerListener.onRegisterSuccess();
+            return;
+        }
+
+        throwExceptionForTransferListener();
+        transferListener.onTransferSuccess(sessionData.getMeasurementRecords());
+
+    }
+
+    private void setSessionFailed(OHQCompletionReason reason) {
+        if (registerListener != null) {
+            registerListener.onRegisterFailed(reason);
+        }
+
+        if (transferListener != null) {
+            transferListener.onTransferFailed(reason);
+        }
+    }
+
+    private void throwExceptionForScanListener() throws IllegalStateException {
+        if (registerListener == null) {
+            throw new IllegalStateException("RegisterListener is not initialized");
+        }
+    }
+
+    private void throwExceptionForTransferListener() throws IllegalStateException {
+        if (transferListener == null) {
+            throw new IllegalStateException("TransferListener is not initialized");
+        }
+    }
+
+    public interface RegisterListener {
+        void onScanned(List<DiscoveredDevice> discoveredDevices);
+
+        void onRegisterFailed(OHQCompletionReason reason);
+
+        void onRegisterSuccess();
+    }
+
+    public interface TransferListener {
+        void onTransferFailed(OHQCompletionReason reason);
+
+        void onTransferSuccess(List<Map<OHQMeasurementRecordKey, Object>> results);
     }
 }

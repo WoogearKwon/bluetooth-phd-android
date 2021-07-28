@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat;
 import net.huray.phd.R;
 import net.huray.phd.enumerate.DeviceType;
 import net.huray.phd.ui.request_data.OmronRequestActivity;
-import net.huray.phd.ui.scanning.OmronDeviceScanActivity;
+import net.huray.phd.ui.scanning.OmronDeviceRegisterActivity;
 import net.huray.phd.utils.Const;
 
 public class DeviceListActivity extends AppCompatActivity {
@@ -65,7 +65,7 @@ public class DeviceListActivity extends AppCompatActivity {
             return;
         }
 
-        Intent intent = new Intent(this, OmronDeviceScanActivity.class);
+        Intent intent = new Intent(this, OmronDeviceRegisterActivity.class);
         intent.putExtra(Const.EXTRA_DEVICE_TYPE, adapter.getDeviceTypeNumber(position));
         startActivity(intent);
     }
