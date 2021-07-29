@@ -56,6 +56,12 @@ public class OmronDeviceRegisterActivity extends AppCompatActivity
         initDeviceManager();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopScanOmron();
+    }
+
     private void setDeviceType() {
         int deviceTypeNumber = getIntent().getIntExtra(Const.EXTRA_DEVICE_TYPE, 0);
         deviceType = DeviceType.getDeviceType(deviceTypeNumber);
