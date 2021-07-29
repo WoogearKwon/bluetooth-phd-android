@@ -13,5 +13,25 @@ public enum OHQCompletionReason {
     FailedToDeleteUser,
     FailedToSetUserData,
     OperationNotSupported,
-    ConnectionTimedOut,
+    ConnectionTimedOut;
+
+    public boolean isCanceled() {
+        return this == Canceled;
+    }
+
+    public boolean isFailedToConnect() {
+        return this == FailedToConnect;
+    }
+
+    public boolean isFailedToTransfer() {
+        return this == FailedToTransfer;
+    }
+
+    public boolean isFailedToRegisterUser() {
+        return this == FailedToRegisterUser;
+    }
+
+    public boolean isTimeOut() {
+        return this == ConnectionTimedOut;
+    }
 }

@@ -16,4 +16,6 @@
     <string name="alert">주의</string>
     <string name="cacel">취소</string>
     <string name="disconnect">해제</string>
+    <string name="please_check_device_is_on">기기의 전원 상태를 확인해 주세요.</string>
+    <string name="no_data_to_bring">가져올 데이터가 없습니다.</string>
 </resources>

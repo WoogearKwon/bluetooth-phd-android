@@ -10,7 +10,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -18,7 +17,6 @@ import net.huray.phd.R;
 import net.huray.phd.bluetooth.OmronBleDeviceManager;
 import net.huray.phd.bluetooth.model.entity.DiscoveredDevice;
 import net.huray.phd.bluetooth.model.entity.OmronOption;
-import net.huray.phd.bluetooth.model.entity.SessionData;
 import net.huray.phd.bluetooth.model.entity.WeightDeviceInfo;
 import net.huray.phd.bluetooth.model.enumerate.OHQSessionType;
 import net.huray.phd.enumerate.DeviceType;
@@ -26,20 +24,14 @@ import net.huray.phd.ui.request_data.OmronRequestActivity;
 import net.huray.phd.utils.Const;
 import net.huray.phd.utils.PrefUtils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import jp.co.ohq.ble.enumerate.OHQCompletionReason;
 import jp.co.ohq.ble.enumerate.OHQGender;
 
-import static jp.co.ohq.ble.enumerate.OHQCompletionReason.Canceled;
-import static jp.co.ohq.ble.enumerate.OHQCompletionReason.ConnectionTimedOut;
-import static jp.co.ohq.ble.enumerate.OHQCompletionReason.FailedToConnect;
-import static jp.co.ohq.ble.enumerate.OHQCompletionReason.FailedToRegisterUser;
-
-public class OmronDeviceRegisterActivity extends AppCompatActivity implements OmronBleDeviceManager.RegisterListener {
+public class OmronDeviceRegisterActivity extends AppCompatActivity
+        implements OmronBleDeviceManager.RegisterListener {
 
     private DeviceScanAdapter adapter;
     private DeviceType deviceType;
@@ -195,18 +187,13 @@ public class OmronDeviceRegisterActivity extends AppCompatActivity implements Om
     public void onRegisterFailed(OHQCompletionReason reason) {
         hideLoadingView();
 
-        final boolean isCanceled = reason == Canceled;
-        final boolean isFailed = reason == FailedToConnect;
-        final boolean isFailedToRegister = reason == FailedToRegisterUser;
-        final boolean isTimeOut = reason == ConnectionTimedOut;
-
-        if (isCanceled) {
+        if (reason.isCanceled()) {
             Toast.makeText(this, getString(R.string.connection_canceled), Toast.LENGTH_SHORT).show();
             setViewForReadyToScan();
             return;
         }
 
-        if (isFailed || isFailedToRegister || isTimeOut) {
+        if (reason.isFailedToConnect() || reason.isFailedToRegisterUser() || reason.isTimeOut()) {
             Toast.makeText(this, getString(R.string.connection_failed), Toast.LENGTH_SHORT).show();
             setViewForReadyToScan();
         }

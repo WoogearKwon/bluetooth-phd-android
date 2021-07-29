@@ -25,11 +25,6 @@ import jp.co.ohq.ble.enumerate.OHQSessionOptionKey;
 import jp.co.ohq.ble.enumerate.OHQUserDataKey;
 import jp.co.ohq.utility.Handler;
 
-import static jp.co.ohq.ble.enumerate.OHQCompletionReason.Canceled;
-import static jp.co.ohq.ble.enumerate.OHQCompletionReason.ConnectionTimedOut;
-import static jp.co.ohq.ble.enumerate.OHQCompletionReason.FailedToConnect;
-import static jp.co.ohq.ble.enumerate.OHQCompletionReason.FailedToRegisterUser;
-
 public class OmronBleDeviceManager implements ScanController.Listener, SessionController.Listener {
     private final ScanController scanController = new ScanController(this);
     private final SessionController sessionController = new SessionController(this);
@@ -170,7 +165,6 @@ public class OmronBleDeviceManager implements ScanController.Listener, SessionCo
 
     @Override
     public void onScan(@NonNull @NotNull List<DiscoveredDevice> discoveredDevices) {
-//        omronListener.onScanned(discoveredDevices);
         throwExceptionForScanListener();
         registerListener.onScanned(discoveredDevices);
     }
@@ -186,12 +180,10 @@ public class OmronBleDeviceManager implements ScanController.Listener, SessionCo
     @Override
     public void onSessionComplete(@NonNull @NotNull SessionData sessionData) {
         OHQCompletionReason reason = sessionData.getCompletionReason();
-        final boolean isCanceled = reason == Canceled;
-        final boolean isFailed = reason == FailedToConnect;
-        final boolean isFailedToRegister = reason == FailedToRegisterUser;
-        final boolean isTimeOut = reason == ConnectionTimedOut;
 
-        if (isCanceled || isFailed || isFailedToRegister || isTimeOut) {
+        assert reason != null;
+        if (reason.isCanceled() || reason.isFailedToConnect()
+                || reason.isFailedToRegisterUser() || reason.isTimeOut()) {
             setSessionFailed(sessionData.getCompletionReason());
             return;
         }
@@ -230,6 +222,7 @@ public class OmronBleDeviceManager implements ScanController.Listener, SessionCo
     }
 
     public interface RegisterListener {
+
         void onScanned(List<DiscoveredDevice> discoveredDevices);
 
         void onRegisterFailed(OHQCompletionReason reason);
@@ -238,6 +231,7 @@ public class OmronBleDeviceManager implements ScanController.Listener, SessionCo
     }
 
     public interface TransferListener {
+
         void onTransferFailed(OHQCompletionReason reason);
 
         void onTransferSuccess(List<Map<OHQMeasurementRecordKey, Object>> results);

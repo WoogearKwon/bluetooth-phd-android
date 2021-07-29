@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -107,13 +108,44 @@ public class OmronRequestActivity extends AppCompatActivity implements OmronBleD
                 this);
     }
 
+    private void showLoadingView() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void hideLoadingView() {
+        progressBar.setVisibility(View.GONE);
+    }
+
     @Override
     public void onTransferFailed(OHQCompletionReason reason) {
+        hideLoadingView();
 
+        if (reason.isCanceled()) {
+            Toast.makeText(this, getString(R.string.connection_canceled), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (reason.isTimeOut()) {
+            Toast.makeText(this, getString(R.string.please_check_device_is_on), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onTransferSuccess(List<Map<OHQMeasurementRecordKey, Object>> results) {
+        hideLoadingView();
 
+        if (results.isEmpty()) {
+            Toast.makeText(this, getString(R.string.no_data_to_bring), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (deviceType.isBpDevice()) {
+            // saveBpData();
+            return;
+        }
+
+        if (deviceType.isWeightDevice()) {
+            // saveWeightData();
+        }
     }
 }
