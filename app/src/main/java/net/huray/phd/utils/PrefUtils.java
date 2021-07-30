@@ -3,6 +3,9 @@ package net.huray.phd.utils;
 import androidx.annotation.Nullable;
 
 import net.huray.phd.App;
+import net.huray.phd.bluetooth.model.entity.OmronOption;
+import net.huray.phd.bluetooth.model.entity.WeightDeviceInfo;
+import net.huray.phd.bluetooth.model.enumerate.OHQSessionType;
 
 public class PrefUtils {
 
@@ -54,6 +57,28 @@ public class PrefUtils {
     public static int getOmronBleWeightDeviceSequenceNumber() {
         return App.getInstance().getSecurePreferences()
                 .getInt(Const.PREF_OMRON_WEIGHT_DEVICE_SEQ, 0);
+    }
+
+    public static void setOmronBleDataBaseIncrementKey(long key) {
+        App.getInstance().getSecurePreferences()
+                .edit()
+                .putLong(Const.PREF_OMRON_WEIGHT_DEVICE_DB_CHANGE_KEY, key)
+                .apply();
+    }
+
+    public static long getOmronBleDataBaseIncrementKey() {
+        return App.getInstance().getSecurePreferences()
+                .getLong(Const.PREF_OMRON_WEIGHT_DEVICE_DB_CHANGE_KEY, 0);
+    }
+
+    public static WeightDeviceInfo getOmronWeightTransferInfo() {
+        String address = getOmronBleWeightDeviceAddress();
+        int userIndex = getOmronBleWeightDeviceUserIndex();
+        int seqNumber = getOmronBleWeightDeviceSequenceNumber();
+        long incrementKey = getOmronBleDataBaseIncrementKey();
+
+        return new WeightDeviceInfo(address, userIndex, OmronOption.getDemoUser(), seqNumber,
+                incrementKey, OHQSessionType.TRANSFER);
     }
 
     public static void removeOmronWeightDeice() {

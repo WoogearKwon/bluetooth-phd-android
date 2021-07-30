@@ -10,4 +10,5 @@ public class Const {
     public static final String PREF_OMRON_WEIGHT_DEVICE_SEQ = "PREF_OMRON_WEIGHT_DEVICE_SEQNUM";
     public static final String PREF_ISENS_DEVICE_NAME = "PREF_ISENS_DEVICE_NAME";
     public static final String PREF_ISENS_DEVICE_ADDRESS = "PREF_ISENS_DEVICE_ADDRESS";
+    public static final String PREF_OMRON_WEIGHT_DEVICE_DB_CHANGE_KEY = "PREF_OMRON_WEIGHT_DEVICE_DB_CHANGE_KEY";
 }

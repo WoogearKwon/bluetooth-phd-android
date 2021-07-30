@@ -1,4 +1,4 @@
-package net.huray.phd.ui.scanning;
+package net.huray.phd.ui.register;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,7 +33,7 @@ import jp.co.ohq.ble.enumerate.OHQGender;
 public class OmronDeviceRegisterActivity extends AppCompatActivity
         implements OmronBleDeviceManager.RegisterListener {
 
-    private DeviceScanAdapter adapter;
+    private DeviceRegisterAdapter adapter;
     private DeviceType deviceType;
     private OmronBleDeviceManager omronManager;
 
@@ -115,7 +115,7 @@ public class OmronDeviceRegisterActivity extends AppCompatActivity
         TextView tvTitle = findViewById(R.id.tv_scan_title);
         tvTitle.setText(getString(deviceType.getName()));
 
-        adapter = new DeviceScanAdapter(this, deviceType);
+        adapter = new DeviceRegisterAdapter(this, deviceType);
         ListView listView = findViewById(R.id.lv_scanned_device_list);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener((parent, view, position, id) -> connectOmronWeightDevice(position));

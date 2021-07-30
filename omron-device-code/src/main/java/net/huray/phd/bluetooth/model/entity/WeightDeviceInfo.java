@@ -11,7 +11,7 @@ public class WeightDeviceInfo {
     private final int index;
     private final Map<OHQUserDataKey, Object> userData;
     private int sequenceNumber = -1;
-    private int incrementKey = -1;
+    private long incrementKey = 0;
     private OHQSessionType sessionType;
 
     public WeightDeviceInfo(String address, int index, Map<OHQUserDataKey, Object> userData) {
@@ -21,7 +21,7 @@ public class WeightDeviceInfo {
     }
 
     public WeightDeviceInfo(String address, int index, Map<OHQUserDataKey, Object> userData,
-                            int sequenceNumber, int incrementKey, OHQSessionType sessionType) {
+                            int sequenceNumber, long incrementKey, OHQSessionType sessionType) {
         this(address, index, userData);
         this.sequenceNumber = sequenceNumber;
         this.incrementKey = incrementKey;
@@ -44,7 +44,7 @@ public class WeightDeviceInfo {
         return sequenceNumber;
     }
 
-    public int getIncrementKey() {
+    public long getIncrementKey() {
         return incrementKey;
     }
 

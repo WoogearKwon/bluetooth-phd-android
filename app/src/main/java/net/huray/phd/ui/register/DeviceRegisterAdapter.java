@@ -1,4 +1,4 @@
-package net.huray.phd.ui.scanning;
+package net.huray.phd.ui.register;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -15,13 +15,13 @@ import net.huray.phd.model.Device;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DeviceScanAdapter extends BaseAdapter {
+public class DeviceRegisterAdapter extends BaseAdapter {
     private final Context context;
     private final DeviceType deviceType;
 
     private final List<Device> devices = new ArrayList<>();
 
-    public DeviceScanAdapter(Context context, DeviceType deviceType) {
+    public DeviceRegisterAdapter(Context context, DeviceType deviceType) {
         this.context = context;
         this.deviceType = deviceType;
     }

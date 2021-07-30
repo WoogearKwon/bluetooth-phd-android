@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat;
 import net.huray.phd.R;
 import net.huray.phd.enumerate.DeviceType;
 import net.huray.phd.ui.request_data.OmronRequestActivity;
-import net.huray.phd.ui.scanning.OmronDeviceRegisterActivity;
+import net.huray.phd.ui.register.OmronDeviceRegisterActivity;
 import net.huray.phd.utils.Const;
 
 public class DeviceListActivity extends AppCompatActivity {

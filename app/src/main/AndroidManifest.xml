@@ -22,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.scanning.OmronDeviceRegisterActivity" />
+        <activity android:name=".ui.register.OmronDeviceRegisterActivity" />
     </application>
 
 </manifest>

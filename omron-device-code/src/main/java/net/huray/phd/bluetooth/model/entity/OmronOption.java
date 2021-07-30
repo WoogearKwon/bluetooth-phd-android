@@ -29,6 +29,15 @@ public class OmronOption {
         return userData;
     }
 
+    public static Map<OHQUserDataKey, Object> getDemoUser() {
+        final Map<OHQUserDataKey, Object> userData = new HashMap<>();
+        userData.put(OHQUserDataKey.DateOfBirthKey, "2001-01-01");
+        userData.put(OHQUserDataKey.HeightKey, new BigDecimal("170.5"));
+        userData.put(OHQUserDataKey.GenderKey, OHQGender.Male);
+
+        return userData;
+    }
+
     public static Bundle getConfig() {
         CBConfig.CreateBondOption cOption = CBConfig.CreateBondOption.UsedBeforeGattConnection;
         CBConfig.RemoveBondOption rOption = CBConfig.RemoveBondOption.NotUse;

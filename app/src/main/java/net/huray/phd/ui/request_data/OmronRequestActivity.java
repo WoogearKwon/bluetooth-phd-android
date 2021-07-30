@@ -13,28 +13,35 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import net.huray.phd.R;
 import net.huray.phd.bluetooth.OmronBleDeviceManager;
+import net.huray.phd.bluetooth.model.entity.OmronOption;
+import net.huray.phd.bluetooth.model.entity.SessionData;
+import net.huray.phd.bluetooth.model.entity.WeightDeviceInfo;
 import net.huray.phd.bluetooth.model.enumerate.OHQSessionType;
 import net.huray.phd.enumerate.DeviceType;
+import net.huray.phd.model.WeightData;
 import net.huray.phd.utils.Const;
 import net.huray.phd.utils.PrefUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import jp.co.ohq.ble.enumerate.OHQCompletionReason;
+import jp.co.ohq.ble.enumerate.OHQGender;
 import jp.co.ohq.ble.enumerate.OHQMeasurementRecordKey;
+import jp.co.ohq.ble.enumerate.OHQUserDataKey;
+
+import static jp.co.ohq.ble.enumerate.OHQGender.Female;
+import static jp.co.ohq.ble.enumerate.OHQGender.Male;
 
 public class OmronRequestActivity extends AppCompatActivity implements OmronBleDeviceManager.TransferListener {
 
     private OmronBleDeviceManager omronManager;
-
+    private OmronDataAdapter adapter;
     private DeviceType deviceType;
 
-    private Button btnRequest;
-    private TextView tvDisconnect, tvUserIndex;
-    private ConstraintLayout progressBar, userIndexContainer;
-
-    private OmronDataAdapter adapter;
+    private ConstraintLayout progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +62,10 @@ public class OmronRequestActivity extends AppCompatActivity implements OmronBleD
         TextView tvTitle = findViewById(R.id.tv_request_omron_title);
         tvTitle.setText(deviceType.getName());
 
-        btnRequest = findViewById(R.id.btn_request_omron_data);
+        Button btnRequest = findViewById(R.id.btn_request_omron_data);
+        btnRequest.setOnClickListener(v -> requestData());
 
-        tvDisconnect = findViewById(R.id.tv_disconnect_omron_device);
+        TextView tvDisconnect = findViewById(R.id.tv_disconnect_omron_device);
         tvDisconnect.setOnClickListener(v -> showConfirmDialog());
 
         adapter = new OmronDataAdapter(this, deviceType);
@@ -65,15 +73,30 @@ public class OmronRequestActivity extends AppCompatActivity implements OmronBleD
         listView.setAdapter(adapter);
 
         progressBar = findViewById(R.id.progress_container);
-        userIndexContainer = findViewById(R.id.constraint_user_index);
-        tvUserIndex = findViewById(R.id.tv_user_index);
+        ConstraintLayout userIndexContainer = findViewById(R.id.constraint_user_index);
+        TextView tvUserIndex = findViewById(R.id.tv_user_index);
+
+        Button btnStop = findViewById(R.id.btn_stop_connection);
+        btnStop.setOnClickListener(v -> omronManager.cancelSession());
 
         if (deviceType.isWeightDevice()) {
             userIndexContainer.setVisibility(View.VISIBLE);
             tvUserIndex.setText(String.valueOf(PrefUtils.getOmronBleWeightDeviceUserIndex()));
         }
     }
-    
+
+    private void requestData() {
+        showLoadingView();
+
+        if (deviceType.isBpDevice()) {
+            omronManager.requestBpData(PrefUtils.getOmronBleBpDeviceAddress());
+            return;
+        }
+
+        WeightDeviceInfo info = PrefUtils.getOmronWeightTransferInfo();
+        omronManager.requestWeightData(info);
+    }
+
     private void showConfirmDialog() {
         AlertDialog dialog = new AlertDialog.Builder(this).create();
         dialog.setTitle(getString(R.string.alert));
@@ -121,7 +144,7 @@ public class OmronRequestActivity extends AppCompatActivity implements OmronBleD
         hideLoadingView();
 
         if (reason.isCanceled()) {
-            Toast.makeText(this, getString(R.string.connection_canceled), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.request_canceled), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -131,21 +154,44 @@ public class OmronRequestActivity extends AppCompatActivity implements OmronBleD
     }
 
     @Override
-    public void onTransferSuccess(List<Map<OHQMeasurementRecordKey, Object>> results) {
+    public void onTransferSuccess(SessionData sessionData) {
         hideLoadingView();
+        List<Map<OHQMeasurementRecordKey, Object>> results = sessionData.getMeasurementRecords();
 
         if (results.isEmpty()) {
             Toast.makeText(this, getString(R.string.no_data_to_bring), Toast.LENGTH_SHORT).show();
             return;
         }
 
+        Toast.makeText(this, getString(R.string.success_to_receive_data), Toast.LENGTH_SHORT).show();
+
         if (deviceType.isBpDevice()) {
-            // saveBpData();
+            // updateBpData();
             return;
         }
 
         if (deviceType.isWeightDevice()) {
-            // saveWeightData();
+            updateWeightData(results);
+            PrefUtils.setOmronBleWeightDeviceSequenceNumber(sessionData.getSequenceNumberOfLatestRecord());
+
+            if (omronManager.isUserInfoChanged(sessionData, OmronOption.getDemoUser())) {
+                // updateIncrementDataKey();
+            }
         }
+    }
+
+    private void updateWeightData(List<Map<OHQMeasurementRecordKey, Object>> results) {
+        List<WeightData> data = results.stream()
+                .map(this::mapWeightResult)
+                .collect(Collectors.toList());
+        adapter.addWeightData(data);
+    }
+
+    private WeightData mapWeightResult(Map<OHQMeasurementRecordKey, Object> data) {
+        return new WeightData(
+                (String) data.get(OHQMeasurementRecordKey.TimeStampKey),
+                ((BigDecimal) data.get(OHQMeasurementRecordKey.BodyFatPercentageKey)).floatValue(),
+                ((BigDecimal) data.get(OHQMeasurementRecordKey.WeightKey)).floatValue()
+        );
     }
 }
