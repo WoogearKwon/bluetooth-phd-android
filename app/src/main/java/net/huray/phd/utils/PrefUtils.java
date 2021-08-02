@@ -77,8 +77,7 @@ public class PrefUtils {
         int seqNumber = getOmronBleWeightDeviceSequenceNumber();
         long incrementKey = getOmronBleDataBaseIncrementKey();
 
-        return new WeightDeviceInfo(address, userIndex, OmronOption.getDemoUser(), seqNumber,
-                incrementKey, OHQSessionType.TRANSFER);
+        return new WeightDeviceInfo(address, userIndex, seqNumber, incrementKey, OHQSessionType.TRANSFER);
     }
 
     public static void removeOmronWeightDeice() {

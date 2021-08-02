@@ -104,8 +104,7 @@ public class OmronDeviceRegisterActivity extends AppCompatActivity
 
         WeightDeviceInfo deviceData = new WeightDeviceInfo(
                 deviceAddress,
-                userIndex,
-                OmronOption.getWeightUserData("2001-01-01", "170.5", OHQGender.Male));
+                userIndex);
         omronManager.connectWeightDevice(deviceData);
 
         showLoadingView();

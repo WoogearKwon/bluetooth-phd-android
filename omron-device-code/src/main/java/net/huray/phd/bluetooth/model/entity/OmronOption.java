@@ -20,15 +20,6 @@ public class OmronOption {
     private static final long REGISTER_WAIT_TIME = 30 * 1000L;
     private static final long REQUEST_WAIT_TIME = 15 * 1000L;
 
-    public static Map<OHQUserDataKey, Object> getWeightUserData(String dateOfBirth, String height, OHQGender gender) {
-        final Map<OHQUserDataKey, Object> userData = new HashMap<>();
-        userData.put(OHQUserDataKey.DateOfBirthKey, dateOfBirth);
-        userData.put(OHQUserDataKey.HeightKey, new BigDecimal(height));
-        userData.put(OHQUserDataKey.GenderKey, gender);
-
-        return userData;
-    }
-
     public static Map<OHQUserDataKey, Object> getDemoUser() {
         final Map<OHQUserDataKey, Object> userData = new HashMap<>();
         userData.put(OHQUserDataKey.DateOfBirthKey, "2001-01-01");
@@ -91,7 +82,7 @@ public class OmronOption {
         }
 
         options.put(OHQSessionOptionKey.UserIndexKey, info.getIndex());
-        options.put(OHQSessionOptionKey.UserDataKey, info.getUserData());
+        options.put(OHQSessionOptionKey.UserDataKey, OmronOption.getDemoUser());
         options.put(OHQSessionOptionKey.UserDataUpdateFlagKey, true);
         options.put(OHQSessionOptionKey.AllowAccessToOmronExtendedMeasurementRecordsKey, true);
         options.put(OHQSessionOptionKey.AllowControlOfReadingPositionToMeasurementRecordsKey, true);
