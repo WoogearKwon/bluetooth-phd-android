@@ -23,13 +23,9 @@ import jp.co.ohq.ble.enumerate.OHQCompletionReason;
 import jp.co.ohq.ble.enumerate.OHQConnectionState;
 import jp.co.ohq.ble.enumerate.OHQDeviceCategory;
 import jp.co.ohq.ble.enumerate.OHQGender;
-import jp.co.ohq.ble.enumerate.OHQMeasurementRecordKey;
 import jp.co.ohq.ble.enumerate.OHQSessionOptionKey;
 import jp.co.ohq.ble.enumerate.OHQUserDataKey;
 import jp.co.ohq.utility.Handler;
-
-import static jp.co.ohq.ble.enumerate.OHQGender.Female;
-import static jp.co.ohq.ble.enumerate.OHQGender.Male;
 
 public class OmronBleDeviceManager implements ScanController.Listener, SessionController.Listener {
     private final ScanController scanController = new ScanController(this);
@@ -147,12 +143,9 @@ public class OmronBleDeviceManager implements ScanController.Listener, SessionCo
             }
 
             private void onStarted() {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
+                handler.post(() -> {
                         sessionController.setConfig(OmronOption.getConfig());
                         sessionController.startSession(deviceAddress, getOptionKeys());
-                    }
                 });
             }
         });
