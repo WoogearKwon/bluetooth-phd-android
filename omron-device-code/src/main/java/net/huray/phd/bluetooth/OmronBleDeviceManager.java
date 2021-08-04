@@ -41,7 +41,6 @@ public class OmronBleDeviceManager implements ScanController.Listener, SessionCo
     private WeightDeviceInfo weightDeviceInfo;
 
     private String deviceAddress;
-    private int userIndex = -1;
 
     private boolean isScanning = false;
 
@@ -85,8 +84,8 @@ public class OmronBleDeviceManager implements ScanController.Listener, SessionCo
     }
 
     public void connectWeightDevice(WeightDeviceInfo info) {
+        weightDeviceInfo = info;
         deviceAddress = info.getAddress();
-        userIndex = info.getIndex();
         stopScan();
 
         startOmronSession();
@@ -102,7 +101,6 @@ public class OmronBleDeviceManager implements ScanController.Listener, SessionCo
     public void requestWeightData(WeightDeviceInfo info) {
         weightDeviceInfo = info;
         deviceAddress = info.getAddress();
-        userIndex = info.getIndex();
 
         startOmronSession();
     }
@@ -150,6 +148,9 @@ public class OmronBleDeviceManager implements ScanController.Listener, SessionCo
 
     private Map<OHQSessionOptionKey, Object> getOptionKeys() {
         if (deviceCategory == OHQDeviceCategory.BodyCompositionMonitor) {
+            if (weightDeviceInfo == null) {
+                throw new NullPointerException("weightDeviceInfo is null");
+            }
             return OmronOption.getWeightOptionsKeys(weightDeviceInfo);
         }
 

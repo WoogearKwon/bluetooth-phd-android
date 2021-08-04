@@ -3,9 +3,7 @@ package net.huray.phd.utils;
 import androidx.annotation.Nullable;
 
 import net.huray.phd.App;
-import net.huray.phd.bluetooth.model.entity.OmronOption;
 import net.huray.phd.bluetooth.model.entity.WeightDeviceInfo;
-import net.huray.phd.bluetooth.model.enumerate.OHQSessionType;
 
 public class PrefUtils {
 
@@ -77,7 +75,7 @@ public class PrefUtils {
         int seqNumber = getOmronBleWeightDeviceSequenceNumber();
         long incrementKey = getOmronBleDataBaseIncrementKey();
 
-        return new WeightDeviceInfo(address, userIndex, seqNumber, incrementKey, OHQSessionType.TRANSFER);
+        return WeightDeviceInfo.newInstanceForTransfer(address, userIndex, seqNumber, incrementKey);
     }
 
     public static void removeOmronWeightDeice() {

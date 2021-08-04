@@ -102,9 +102,7 @@ public class OmronDeviceRegisterActivity extends AppCompatActivity
 
         deviceAddress = adapter.getDeviceAddress(position);
 
-        WeightDeviceInfo deviceData = new WeightDeviceInfo(
-                deviceAddress,
-                userIndex);
+        WeightDeviceInfo deviceData = WeightDeviceInfo.newInstanceForRegister(deviceAddress, userIndex);
         omronManager.connectWeightDevice(deviceData);
 
         showLoadingView();
