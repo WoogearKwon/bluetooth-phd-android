@@ -35,7 +35,7 @@ import jp.co.ohq.ble.enumerate.OHQUserDataKey;
 import static jp.co.ohq.ble.enumerate.OHQGender.Female;
 import static jp.co.ohq.ble.enumerate.OHQGender.Male;
 
-public class OmronRequestActivity extends AppCompatActivity implements OmronBleDeviceManager.TransferListener {
+public class OmronTransferActivity extends AppCompatActivity implements OmronBleDeviceManager.TransferListener {
 
     private OmronBleDeviceManager omronManager;
     private OmronDataAdapter adapter;

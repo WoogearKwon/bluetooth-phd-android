@@ -16,11 +16,10 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import net.huray.phd.R;
 import net.huray.phd.bluetooth.OmronBleDeviceManager;
 import net.huray.phd.bluetooth.model.entity.DiscoveredDevice;
-import net.huray.phd.bluetooth.model.entity.OmronOption;
 import net.huray.phd.bluetooth.model.entity.WeightDeviceInfo;
 import net.huray.phd.bluetooth.model.enumerate.OHQSessionType;
 import net.huray.phd.enumerate.DeviceType;
-import net.huray.phd.ui.request_data.OmronRequestActivity;
+import net.huray.phd.ui.request_data.OmronTransferActivity;
 import net.huray.phd.utils.Const;
 import net.huray.phd.utils.PrefUtils;
 
@@ -28,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jp.co.ohq.ble.enumerate.OHQCompletionReason;
-import jp.co.ohq.ble.enumerate.OHQGender;
 
 public class OmronDeviceRegisterActivity extends AppCompatActivity
         implements OmronBleDeviceManager.RegisterListener {
@@ -175,7 +173,7 @@ public class OmronDeviceRegisterActivity extends AppCompatActivity
     }
 
     private void moveToRequestActivity() {
-        Intent intent = new Intent(this, OmronRequestActivity.class);
+        Intent intent = new Intent(this, OmronTransferActivity.class);
         intent.putExtra(Const.EXTRA_DEVICE_TYPE, deviceType.getNumber());
         startActivity(intent);
         finish();
