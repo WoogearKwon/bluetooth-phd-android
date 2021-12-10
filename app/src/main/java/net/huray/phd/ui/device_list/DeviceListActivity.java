@@ -54,10 +54,6 @@ public class DeviceListActivity extends AppCompatActivity {
     }
 
     private void moveToActivity(int position) {
-        if (adapter.getDeviceTypeNumber(position) == DeviceType.I_SENS_BS.getNumber()) {
-            return;
-        }
-
         if (adapter.getDeviceConnectionState(position)) {
             Intent intent = new Intent(this, OmronTransferActivity.class);
             intent.putExtra(Const.EXTRA_DEVICE_TYPE, adapter.getDeviceTypeNumber(position));

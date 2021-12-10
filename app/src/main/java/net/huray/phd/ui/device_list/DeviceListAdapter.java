@@ -33,11 +33,9 @@ public class DeviceListAdapter extends BaseAdapter {
     private void initDeviceItems() {
         devices.add(DeviceType.OMRON_WEIGHT);
         devices.add(DeviceType.OMRON_BP);
-        devices.add(DeviceType.I_SENS_BS);
 
         connectionStates.add(PrefUtils.getOmronBleWeightDeviceAddress() != null);
         connectionStates.add(PrefUtils.getOmronBleBpDeviceAddress() != null);
-        connectionStates.add(PrefUtils.getIsensBleDeviceAddress() != null);
     }
 
     public int getDeviceTypeNumber(int position) {
